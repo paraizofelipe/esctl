@@ -17,6 +17,8 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 		},
 	}
 
+	actions := actions.NewIndexAction(esClient)
+
 	return &cli.Command{
 		Name:  "index",
 		Usage: "Manage Elasticsearch indices",
@@ -34,7 +36,7 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 				Action: func(c *cli.Context) error {
 					indexName := c.String("n")
 					pretty := c.Bool("p")
-					actions.CreateIndex(esClient, indexName, pretty)
+					actions.CreateIndex(indexName, pretty)
 					return nil
 				},
 			},
@@ -51,7 +53,7 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 					names := c.String("n")
 					pretty := c.Bool("p")
 					indexNames := strings.Split(names, ",")
-					actions.DeleteIndex(esClient, indexNames, pretty)
+					actions.DeleteIndex(indexNames, pretty)
 					return nil
 				},
 			},
@@ -68,7 +70,7 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 					names := c.String("n")
 					pretty := c.Bool("p")
 					indexNames := strings.Split(names, ",")
-					actions.GetIndex(esClient, indexNames, pretty)
+					actions.GetIndex(indexNames, pretty)
 					return nil
 				},
 			},
