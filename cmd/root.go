@@ -5,41 +5,28 @@ import (
 	"log"
 	"os"
 
-	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/pelletier/go-toml"
+	"github.com/paraizofelipe/elastic_tools/internal/actions"
+	"github.com/paraizofelipe/elastic_tools/internal/config"
 	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v2/altsrc"
 )
 
 type Config struct {
 	Elastic []string `toml:"elastic"`
 }
 
-func loadConfig() (*Config, error) {
-	configFile, err := toml.LoadFile("~/.config/elastic_tools/config.toml")
-	if err != nil {
-		return nil, err
-	}
-
-	var config Config
-	if err := configFile.Unmarshal(&config); err != nil {
-		return nil, err
-	}
-
-	return &config, nil
-}
-
-func NewRootCommand(esClient *elasticsearch.Client) *cli.App {
+func NewRootCommand(setup *config.ConfigFile) *cli.App {
 	app := cli.NewApp()
 	app.Name = "elastic_tools"
 	app.Usage = "Elasticsearch Tools CLI"
 	app.Version = "1.0.0"
 
 	flags := []cli.Flag{
-		&cli.StringSliceFlag{
+		altsrc.NewStringSliceFlag(&cli.StringSliceFlag{
 			Name:    "elastic",
 			Aliases: []string{"e"},
 			Value:   cli.NewStringSlice("http://localhost:9200"),
-		},
+		}),
 		&cli.StringFlag{
 			Name:       "config-file",
 			Aliases:    []string{"f"},
@@ -48,15 +35,17 @@ func NewRootCommand(esClient *elasticsearch.Client) *cli.App {
 		},
 	}
 
-	app.Action = func(c *cli.Context) error {
-		fmt.Println(c.StringSlice("e"))
-		return nil
+	app.Before = altsrc.InitInputSourceWithContext(flags, altsrc.NewTomlSourceFromFlagFunc("config-file"))
+
+	esNodes := setup.Elastic
+	esClient, err := actions.CreateClient(esNodes)
+	if err != nil {
+		log.Fatalf("Error to create client: %s", err)
 	}
 
 	app.Flags = flags
 	app.Commands = []*cli.Command{
 		NewIndexCommand(esClient),
-		NewDocCommand(esClient),
 	}
 
 	return app
@@ -64,20 +53,12 @@ func NewRootCommand(esClient *elasticsearch.Client) *cli.App {
 
 func Execute() {
 
-	var (
-		err      error
-		esClient *elasticsearch.Client
-	)
-
-	cfg := elasticsearch.Config{
-		Addresses: []string{"http://192.168.68.119:9200"},
+	config, err := config.Load()
+	if err != nil {
+		log.Fatalf("Error while loading configuration file: %s", err)
 	}
 
-	if esClient, err = elasticsearch.NewClient(cfg); err != nil {
-		log.Fatalf("Exec error: %s", err)
-	}
-
-	app := NewRootCommand(esClient)
+	app := NewRootCommand(config)
 	err = app.Run(os.Args)
 	if err != nil {
 		log.Fatalf("Exec error: %s", err)
