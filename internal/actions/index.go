@@ -18,6 +18,8 @@ type Indexer interface {
 	GetIndex(*cli.Context) error
 	AddDoc(*cli.Context) error
 	ListDoc(*cli.Context) error
+
+	ExecBulkOperation(*cli.Context) error
 }
 
 type IndexAction struct {
@@ -33,17 +35,28 @@ func NewIndexAction(esClient *elasticsearch.Client) Indexer {
 func (i *IndexAction) CreateIndex(ctx *cli.Context) (err error) {
 
 	var (
-		indexName   string = ctx.Args().Get(0)
-		pretty      bool   = ctx.Bool("pretty")
-		res         *esapi.Response
-		reqSettings []func(*esapi.IndicesCreateRequest) = []func(*esapi.IndicesCreateRequest){
+		indexName    string = ctx.Args().Get(0)
+		pretty       bool   = ctx.Bool("pretty")
+		settingsFile string = ctx.String("settings-file")
+		res          *esapi.Response
+		reqSettings  []func(*esapi.IndicesCreateRequest) = []func(*esapi.IndicesCreateRequest){
 			i.client.Indices.Create.WithTimeout(5 * time.Second),
 			i.client.Indices.Create.WithContext(context.Background()),
 		}
+		settingsIndex string
 	)
 
 	if pretty {
 		reqSettings = append(reqSettings, i.client.Indices.Create.WithPretty())
+	}
+
+	if settingsFile != "" {
+		settingsIndex, err = file.ReadJSONFile(settingsFile)
+		if err != nil {
+			return fmt.Errorf("Erro to read settings file: %s", err)
+		}
+		settingsBody := strings.NewReader(settingsIndex)
+		reqSettings = append(reqSettings, i.client.Indices.Create.WithBody(settingsBody))
 	}
 
 	if res, err = i.client.Indices.Create(
@@ -155,6 +168,43 @@ func (i *IndexAction) AddDoc(ctx *cli.Context) (err error) {
 
 	if res, err = i.client.Index(indexName, strings.NewReader(doc), reqSettings...); err != nil {
 		return fmt.Errorf("Error when querying the index: %s", err)
+	}
+
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("[REQ-ERROR]: %s", res.String())
+	}
+
+	fmt.Println(res.String())
+
+	return
+}
+
+func (i *IndexAction) ExecBulkOperation(ctx *cli.Context) (err error) {
+
+	var (
+		pretty         bool   = ctx.Bool("pretty")
+		bulkFile       string = ctx.String("bulk-file")
+		res            *esapi.Response
+		reqSettings    []func(*esapi.BulkRequest) = []func(*esapi.BulkRequest){}
+		bulkOperations string
+	)
+
+	if pretty {
+		reqSettings = append(reqSettings, i.client.Bulk.WithPretty())
+	}
+
+	bulkOperations, err = file.ReadJSONFile(bulkFile)
+	if err != nil {
+		return fmt.Errorf("Error to laod bulk file: %s", err)
+	}
+
+	if res, err = i.client.Bulk(
+		strings.NewReader(bulkOperations),
+		reqSettings...,
+	); err != nil {
+		return fmt.Errorf("")
 	}
 
 	defer res.Body.Close()

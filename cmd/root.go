@@ -46,6 +46,9 @@ func NewRootCommand(setup *config.ConfigFile) *cli.App {
 	app.Flags = flags
 	app.Commands = []*cli.Command{
 		NewIndexCommand(esClient),
+		NewSearchCommand(esClient),
+		NewAliasCommand(esClient),
+		NewCatCommand(esClient),
 	}
 
 	return app

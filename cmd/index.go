@@ -27,8 +27,15 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 		Flags: appFlags,
 		Subcommands: []*cli.Command{
 			{
-				Name:   "create",
-				Usage:  "Create a new index",
+				Name:  "create",
+				Usage: "Create a new index",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "settings-file",
+						Usage:   "file for configuration of the index",
+						Aliases: []string{"f"},
+					},
+				},
 				Action: indexer.CreateIndex,
 			},
 			{
@@ -71,8 +78,27 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 				Action: indexer.AddDoc,
 			},
 			{
+				Name:  "bulk",
+				Usage: "use bulk operation in index",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:     "bulk-file",
+						Usage:    "path of the JSON file with the bulk operations",
+						Aliases:  []string{"f"},
+						Required: true,
+						Action: func(ctx *cli.Context, bulkFile string) (err error) {
+							if !file.Exists(bulkFile) {
+								return fmt.Errorf("file %s not found!", bulkFile)
+							}
+							return
+						},
+					},
+				},
+				Action: indexer.ExecBulkOperation,
+			},
+			{
 				Name:  "list",
-				Usage: "List documents in index",
+				Usage: "list documents in index",
 				Flags: []cli.Flag{
 					&cli.IntFlag{
 						Name:    "size",
