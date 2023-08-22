@@ -28,11 +28,11 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 		Subcommands: []*cli.Command{
 			{
 				Name:  "create",
-				Usage: "Create a new index",
+				Usage: "Create a new index in Elasticsearch",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "settings-file",
-						Usage:   "file for configuration of the index",
+						Usage:   "Path to the configuration file for the index",
 						Aliases: []string{"f"},
 					},
 				},
@@ -40,17 +40,17 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 			},
 			{
 				Name:   "delete",
-				Usage:  "Delete a new index",
+				Usage:  "Delete an existing index from Elasticsearch",
 				Action: indexer.DeleteIndex,
 			},
 			{
 				Name:   "get",
-				Usage:  "get a created indice",
+				Usage:  "Get information about a created index",
 				Action: indexer.GetIndex,
 			},
 			{
 				Name:  "add",
-				Usage: "add document inside index",
+				Usage: "Add a document to an index",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "document",
@@ -58,18 +58,18 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 						Aliases: []string{"d"},
 						Action: func(ctx *cli.Context, doc string) (err error) {
 							if !file.IsContentValid(doc) {
-								return fmt.Errorf("JSON string invalid!")
+								return fmt.Errorf("Invalid JSON string!")
 							}
 							return
 						},
 					},
 					&cli.StringFlag{
 						Name:    "document-file",
-						Usage:   "path of the JSON file with the document",
+						Usage:   "Path to the JSON file with the document",
 						Aliases: []string{"f"},
 						Action: func(ctx *cli.Context, docFile string) (err error) {
 							if !file.Exists(docFile) {
-								return fmt.Errorf("file %s not found!", docFile)
+								return fmt.Errorf("File %s not found!", docFile)
 							}
 							return
 						},
@@ -79,16 +79,16 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 			},
 			{
 				Name:  "bulk",
-				Usage: "use bulk operation in index",
+				Usage: "Perform bulk operations on an index",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:     "bulk-file",
-						Usage:    "path of the JSON file with the bulk operations",
+						Usage:    "Path to the JSON file with bulk operations",
 						Aliases:  []string{"f"},
 						Required: true,
 						Action: func(ctx *cli.Context, bulkFile string) (err error) {
 							if !file.Exists(bulkFile) {
-								return fmt.Errorf("file %s not found!", bulkFile)
+								return fmt.Errorf("File %s not found!", bulkFile)
 							}
 							return
 						},
@@ -98,11 +98,11 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 			},
 			{
 				Name:  "list",
-				Usage: "list documents in index",
+				Usage: "List documents in an index",
 				Flags: []cli.Flag{
 					&cli.IntFlag{
 						Name:    "size",
-						Usage:   "number of hits to return",
+						Usage:   "Number of hits to return",
 						Aliases: []string{"s"},
 					},
 				},

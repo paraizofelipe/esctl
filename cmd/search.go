@@ -12,12 +12,12 @@ func NewSearchCommand(esClient *elasticsearch.Client) *cli.Command {
 		&cli.BoolFlag{
 			Name:    "pretty",
 			Aliases: []string{"p"},
-			Usage:   "Format response as pretty-printed JSON",
+			Usage:   "Format the response as pretty-printed JSON",
 		},
 		&cli.StringFlag{
 			Name:     "query",
 			Aliases:  []string{"q"},
-			Usage:    "",
+			Usage:    "The search query string",
 			Required: true,
 		},
 	}
@@ -26,7 +26,7 @@ func NewSearchCommand(esClient *elasticsearch.Client) *cli.Command {
 
 	return &cli.Command{
 		Name:   "search",
-		Usage:  "Search documents in index",
+		Usage:  "Search documents in an index",
 		Flags:  appFlags,
 		Action: searcher.SearchDoc,
 	}

@@ -20,104 +20,104 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 
 	return &cli.Command{
 		Name:  "cat",
-		Usage: "Manage Elasticsearch aliases",
+		Usage: "Manage Elasticsearch aliases and diagnostic information",
 		Flags: appFlags,
 		Subcommands: []*cli.Command{
 			{
 				Name:   "indices",
-				Usage:  "list all incides",
+				Usage:  "List all indices in Elasticsearch",
 				Action: catManager.Indices,
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "",
+						Usage:   "Show detailed information about indices",
 					},
 				},
 			},
 			{
 				Name:   "aliases",
-				Usage:  "list all aliases",
+				Usage:  "List all aliases in Elasticsearch",
 				Action: catManager.Aliases,
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "",
+						Usage:   "Show detailed information about aliases",
 					},
 				},
 			},
 			{
 				Name:   "nodes",
-				Usage:  "list all nodes",
+				Usage:  "List all nodes in Elasticsearch cluster",
 				Action: catManager.Nodes,
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "",
+						Usage:   "Show detailed information about nodes",
 					},
 				},
 			},
 			{
 				Name:  "shards",
-				Usage: "list all nodes",
+				Usage: "List shard information for indices",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "index",
 						Aliases: []string{"i"},
-						Usage:   "",
+						Usage:   "Filter by index name",
 					},
 					&cli.StringFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "",
+						Usage:   "Comma-separated list of columns to display",
 					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "",
+						Usage:   "Show detailed information about shards",
 					},
 				},
 				Action: catManager.Shards,
 			},
 			{
 				Name:  "thread-pool",
-				Usage: "list all threads pool",
+				Usage: "List thread pool statistics",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "thread-pool-pattern",
 						Aliases: []string{"p"},
-						Usage:   "",
+						Usage:   "Filter by thread pool pattern",
 					},
 					&cli.StringFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "",
+						Usage:   "Comma-separated list of columns to display",
 					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "",
+						Usage:   "Show detailed information about thread pools",
 					},
 				},
 				Action: catManager.ThreadPool,
 			},
 			{
 				Name:   "pending-tasks",
-				Usage:  "list pending tasks",
+				Usage:  "List pending tasks in Elasticsearch",
 				Action: catManager.PendingTasks,
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "",
+						Usage:   "Show detailed information about pending tasks",
 					},
 				},
 			},

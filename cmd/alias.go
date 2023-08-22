@@ -11,18 +11,18 @@ func NewAliasCommand(esClient *elasticsearch.Client) *cli.Command {
 	appFlags := []cli.Flag{
 		&cli.StringFlag{
 			Name:    "config",
-			Usage:   "JSON string containing the settings",
+			Usage:   "JSON string containing the configuration settings",
 			Aliases: []string{"c"},
 		},
 		&cli.StringFlag{
 			Name:    "aliases-config-file",
-			Usage:   "file containing the alias settings",
+			Usage:   "Path to the file containing the alias settings",
 			Aliases: []string{"f"},
 		},
 		&cli.BoolFlag{
 			Name:    "pretty",
 			Aliases: []string{"p"},
-			Usage:   "Format response as pretty-printed JSON",
+			Usage:   "Format the response as pretty-printed JSON",
 		},
 	}
 
