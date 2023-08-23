@@ -54,6 +54,11 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 				Usage:  "List all nodes in Elasticsearch cluster",
 				Action: catManager.Nodes,
 				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,

@@ -3,7 +3,7 @@ module github.com/paraizofelipe/elastic_tools
 go 1.20
 
 require (
-	github.com/elastic/go-elasticsearch/v7 v7.17.10
+	github.com/brianvoe/gofakeit/v6 v6.23.1
 	github.com/elastic/go-elasticsearch/v8 v8.9.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/urfave/cli/v2 v2.25.7

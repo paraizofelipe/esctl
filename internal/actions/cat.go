@@ -117,6 +117,7 @@ func (c *CatAction) Nodes(ctx *cli.Context) (err error) {
 		reqSettings = []func(*esapi.CatNodesRequest){
 			c.client.Cat.Nodes.WithV(true),
 		}
+		columns      = ctx.String("columns")
 		pretty  bool = ctx.Bool("pretty")
 		resBody string
 	)
@@ -125,6 +126,10 @@ func (c *CatAction) Nodes(ctx *cli.Context) (err error) {
 
 	if pretty {
 		reqSettings = append(reqSettings, c.client.Cat.Nodes.WithPretty())
+	}
+
+	if columns != "" {
+		reqSettings = append(reqSettings, c.client.Cat.Nodes.WithH(columns))
 	}
 
 	if res, err = c.client.Cat.Nodes(reqSettings...); err != nil {

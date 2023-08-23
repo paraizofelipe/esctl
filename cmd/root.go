@@ -35,6 +35,7 @@ func NewRootCommand(setup *config.ConfigFile) *cli.App {
 		},
 	}
 
+	app.EnableBashCompletion = true
 	app.Before = altsrc.InitInputSourceWithContext(flags, altsrc.NewTomlSourceFromFlagFunc("config-file"))
 
 	esNodes := setup.Elastic
