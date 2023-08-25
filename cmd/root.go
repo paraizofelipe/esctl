@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/c-bata/go-prompt"
 	"github.com/paraizofelipe/elastic_tools/internal/actions"
 	"github.com/paraizofelipe/elastic_tools/internal/config"
 	"github.com/urfave/cli/v2"
 	"github.com/urfave/cli/v2/altsrc"
 )
+
+const APP_NAME = "elastic_tools"
 
 type Config struct {
 	Elastic []string `toml:"elastic"`
@@ -17,7 +21,7 @@ type Config struct {
 
 func NewRootCommand(setup *config.ConfigFile) *cli.App {
 	app := cli.NewApp()
-	app.Name = "elastic_tools"
+	app.Name = APP_NAME
 	app.Usage = "Elasticsearch Tools CLI"
 	app.Version = "1.0.0"
 
@@ -52,7 +56,77 @@ func NewRootCommand(setup *config.ConfigFile) *cli.App {
 		NewCatCommand(esClient),
 	}
 
+	app.CommandNotFound = func(ctx *cli.Context, in string) {
+		fmt.Printf("Ops, command %s unknown\n", in)
+	}
+
 	return app
+}
+
+func parseCLIArguments(input string) []string {
+	arguments := strings.Fields(input)
+	if len(arguments) == 0 {
+		return []string{}
+	}
+	return append([]string{APP_NAME}, arguments...)
+}
+
+func contains(slice []string, val string) bool {
+	for _, item := range slice {
+		if item == val {
+			return true
+		}
+	}
+	return false
+}
+
+func NewPrompt(app *cli.App) (pt *prompt.Prompt) {
+	options := LoadOptions(app.Commands)
+
+	pt = prompt.New(
+		func(in string) {
+			if in == "exit" {
+				fmt.Println("Exiting REPL...")
+				os.Exit(0)
+			}
+
+			cliArguments := parseCLIArguments(in)
+			if len(cliArguments) > 0 {
+				err := app.Run(cliArguments)
+				if err != nil {
+					fmt.Println(err)
+				}
+			}
+		},
+		func(d prompt.Document) (suggest []prompt.Suggest) {
+			if d.TextBeforeCursor() == "" {
+				return []prompt.Suggest{}
+			}
+			args := strings.Split(d.TextBeforeCursor(), " ")
+			w := d.GetWordBeforeCursor()
+
+			if len(args) < 2 {
+				for _, cmd := range app.Commands {
+					suggest = append(suggest, prompt.Suggest{Text: cmd.Name, Description: cmd.Usage})
+				}
+				return prompt.FilterHasPrefix(suggest, w, true)
+			}
+
+			for _, arg := range args {
+				if strings.HasPrefix(arg, "-") || strings.HasPrefix(arg, "'") {
+					continue
+				}
+				if aux, ok := options[arg]; ok {
+					suggest = aux
+				}
+			}
+
+			return prompt.FilterHasPrefix(suggest, w, true)
+		},
+		prompt.OptionPrefix(">>> "),
+		prompt.OptionTitle("Interactive CLI"),
+	)
+	return
 }
 
 func Execute() {
@@ -63,8 +137,6 @@ func Execute() {
 	}
 
 	app := NewRootCommand(config)
-	err = app.Run(os.Args)
-	if err != nil {
-		log.Fatalf("Exec error: %s", err)
-	}
+	pt := NewPrompt(app)
+	pt.Run()
 }
