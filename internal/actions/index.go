@@ -18,7 +18,7 @@ type Indexer interface {
 	GetIndex(*cli.Context) error
 	AddDoc(*cli.Context) error
 	ListDoc(*cli.Context) error
-
+	ForceMerge(*cli.Context) error
 	ExecBulkOperation(*cli.Context) error
 }
 
@@ -99,6 +99,39 @@ func (i *IndexAction) DeleteIndex(ctx *cli.Context) (err error) {
 		reqSettings...,
 	); err != nil {
 		return fmt.Errorf("Error to delete index: %s", err)
+	}
+
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("[REQ-ERROR]: %s", res.String())
+	}
+
+	fmt.Println(res.String())
+
+	return
+}
+
+func (i *IndexAction) ForceMerge(ctx *cli.Context) (err error) {
+	var (
+		args        string = ctx.Args().Get(0)
+		indexNames         = strings.Split(args, ",")
+		pretty      bool   = ctx.Bool("pretty")
+		res         *esapi.Response
+		reqSettings = []func(*esapi.IndicesForcemergeRequest){
+			i.client.Indices.Forcemerge.WithIndex(indexNames...),
+			i.client.Indices.Forcemerge.WithContext(ctx.Context),
+		}
+	)
+
+	if pretty {
+		reqSettings = append(reqSettings, i.client.Indices.Forcemerge.WithPretty())
+	}
+
+	if res, err = i.client.Indices.Forcemerge(
+		reqSettings...,
+	); err != nil {
+		return fmt.Errorf("Error to force merge in index: %s", err)
 	}
 
 	defer res.Body.Close()

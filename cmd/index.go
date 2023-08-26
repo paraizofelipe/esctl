@@ -44,6 +44,11 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 				Action: indexer.DeleteIndex,
 			},
 			{
+				Name:   "foce-merge",
+				Usage:  "Forces a merge on the shards of one or more indices",
+				Action: indexer.ForceMerge,
+			},
+			{
 				Name:   "get",
 				Usage:  "Get information about a created index",
 				Action: indexer.GetIndex,
