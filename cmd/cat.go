@@ -28,6 +28,11 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 				Usage:  "List all indices in Elasticsearch",
 				Action: catManager.Indices,
 				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
@@ -41,6 +46,11 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 				Usage:  "List all aliases in Elasticsearch",
 				Action: catManager.Aliases,
 				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
@@ -123,6 +133,83 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Value:   false,
 						Aliases: []string{"d"},
 						Usage:   "Show detailed information about pending tasks",
+					},
+				},
+			},
+			{
+				Name:   "tasks",
+				Usage:  "Returns information about tasks currently executing in the cluster, similar to the task management API",
+				Action: catManager.Tasks,
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:    "describe",
+						Value:   false,
+						Aliases: []string{"d"},
+						Usage:   "Show detailed information about pending tasks",
+					},
+					&cli.StringFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
+				},
+			},
+			{
+				Name:   "health",
+				Usage:  "Returns the health status of a cluster, similar to the cluster health API",
+				Action: catManager.Health,
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:    "describe",
+						Value:   false,
+						Aliases: []string{"d"},
+						Usage:   "Show detailed information about pending tasks",
+					},
+					&cli.StringFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
+				},
+			},
+			{
+				Name:   "repositories",
+				Usage:  "Returns the snapshot repositories for a cluster",
+				Action: catManager.Repositories,
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:    "describe",
+						Value:   false,
+						Aliases: []string{"d"},
+						Usage:   "Show detailed information about pending tasks",
+					},
+					&cli.StringFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
+				},
+			},
+			{
+				Name:   "snapshots",
+				Usage:  "Returns information about the snapshots stored in one or more repositories",
+				Action: catManager.Snapshots,
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:    "describe",
+						Value:   false,
+						Aliases: []string{"d"},
+						Usage:   "Show detailed information about pending tasks",
+					},
+					&cli.StringFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
+					&cli.StringFlag{
+						Name:    "repository",
+						Aliases: []string{"r"},
+						Usage:   "Comma-separated list of snapshot repositories used",
 					},
 				},
 			},

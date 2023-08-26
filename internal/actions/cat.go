@@ -12,11 +12,15 @@ import (
 
 type CatManager interface {
 	Aliases(ctx *cli.Context) error
+	Health(ctx *cli.Context) error
 	Indices(ctx *cli.Context) error
 	Nodes(ctx *cli.Context) error
 	PendingTasks(ctx *cli.Context) error
 	Shards(ctx *cli.Context) error
+	Tasks(ctx *cli.Context) error
 	ThreadPool(ctx *cli.Context) error
+	Repositories(ctx *cli.Context) error
+	Snapshots(ctx *cli.Context) error
 }
 
 type CatAction struct {
@@ -256,6 +260,164 @@ func (c *CatAction) ThreadPool(ctx *cli.Context) (err error) {
 	reqSettings = append(reqSettings, c.client.Cat.ThreadPool.WithHelp(ctx.Bool("describe")))
 
 	if res, err = c.client.Cat.ThreadPool(reqSettings...); err != nil {
+		return fmt.Errorf("%s", err)
+	}
+
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("[REQ-ERROR]: %s", res.String())
+	}
+
+	if resBody, err = readerCloserToString(res.Body); err != nil {
+		return fmt.Errorf("%s", err)
+	}
+
+	fmt.Println(resBody)
+
+	return
+}
+
+func (c *CatAction) Tasks(ctx *cli.Context) (err error) {
+	var (
+		columns     = ctx.String("columns")
+		res         *esapi.Response
+		reqSettings = []func(*esapi.CatTasksRequest){
+			c.client.Cat.Tasks.WithV(true),
+		}
+		resBody string
+	)
+
+	if columns != "" {
+		reqSettings = append(reqSettings, c.client.Cat.Tasks.WithH(columns))
+	}
+
+	if ctx.Bool("pretty") {
+		reqSettings = append(reqSettings, c.client.Cat.Tasks.WithPretty())
+	}
+
+	reqSettings = append(reqSettings, c.client.Cat.Tasks.WithHelp(ctx.Bool("describe")))
+
+	if res, err = c.client.Cat.Tasks(reqSettings...); err != nil {
+		return fmt.Errorf("%s", err)
+	}
+
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("[REQ-ERROR]: %s", res.String())
+	}
+
+	if resBody, err = readerCloserToString(res.Body); err != nil {
+		return fmt.Errorf("%s", err)
+	}
+
+	fmt.Println(resBody)
+
+	return
+}
+
+func (c *CatAction) Health(ctx *cli.Context) (err error) {
+	var (
+		columns     = ctx.String("columns")
+		res         *esapi.Response
+		reqSettings = []func(*esapi.CatHealthRequest){
+			c.client.Cat.Health.WithV(true),
+		}
+		resBody string
+	)
+
+	if columns != "" {
+		reqSettings = append(reqSettings, c.client.Cat.Health.WithH(columns))
+	}
+
+	if ctx.Bool("pretty") {
+		reqSettings = append(reqSettings, c.client.Cat.Health.WithPretty())
+	}
+
+	reqSettings = append(reqSettings, c.client.Cat.Health.WithHelp(ctx.Bool("describe")))
+
+	if res, err = c.client.Cat.Health(reqSettings...); err != nil {
+		return fmt.Errorf("%s", err)
+	}
+
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("[REQ-ERROR]: %s", res.String())
+	}
+
+	if resBody, err = readerCloserToString(res.Body); err != nil {
+		return fmt.Errorf("%s", err)
+	}
+
+	fmt.Println(resBody)
+
+	return
+}
+
+func (c *CatAction) Repositories(ctx *cli.Context) (err error) {
+	var (
+		columns     = ctx.String("columns")
+		res         *esapi.Response
+		reqSettings = []func(*esapi.CatRepositoriesRequest){
+			c.client.Cat.Repositories.WithV(true),
+		}
+		resBody string
+	)
+
+	if columns != "" {
+		reqSettings = append(reqSettings, c.client.Cat.Repositories.WithH(columns))
+	}
+
+	if ctx.Bool("pretty") {
+		reqSettings = append(reqSettings, c.client.Cat.Repositories.WithPretty())
+	}
+
+	reqSettings = append(reqSettings, c.client.Cat.Repositories.WithHelp(ctx.Bool("describe")))
+
+	if res, err = c.client.Cat.Repositories(reqSettings...); err != nil {
+		return fmt.Errorf("%s", err)
+	}
+
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("[REQ-ERROR]: %s", res.String())
+	}
+
+	if resBody, err = readerCloserToString(res.Body); err != nil {
+		return fmt.Errorf("%s", err)
+	}
+
+	fmt.Println(resBody)
+
+	return
+}
+
+func (c *CatAction) Snapshots(ctx *cli.Context) (err error) {
+	var (
+		repository  = ctx.String("repository")
+		columns     = ctx.String("columns")
+		res         *esapi.Response
+		reqSettings = []func(*esapi.CatSnapshotsRequest){
+			c.client.Cat.Snapshots.WithRepository(repository),
+			c.client.Cat.Snapshots.WithV(true),
+		}
+		resBody string
+	)
+
+	if columns != "" {
+		reqSettings = append(reqSettings, c.client.Cat.Snapshots.WithH(columns))
+	}
+
+	if ctx.Bool("pretty") {
+		reqSettings = append(reqSettings, c.client.Cat.Snapshots.WithPretty())
+	}
+
+	reqSettings = append(reqSettings, c.client.Cat.Snapshots.WithHelp(ctx.Bool("describe")))
+
+	if res, err = c.client.Cat.Snapshots(reqSettings...); err != nil {
 		return fmt.Errorf("%s", err)
 	}
 

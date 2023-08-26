@@ -64,11 +64,27 @@ func NewRootCommand(setup *config.ConfigFile) *cli.App {
 }
 
 func parseCLIArguments(input string) []string {
-	arguments := strings.Fields(input)
-	if len(arguments) == 0 {
-		return []string{}
+	parts := strings.Fields(input)
+	var args []string
+	var quotedArg string
+
+	for _, part := range parts {
+		if strings.HasPrefix(part, "'") {
+			part = strings.TrimPrefix(part, "'")
+			quotedArg = part
+		} else if quotedArg != "" {
+			quotedArg += " " + part
+			if strings.HasSuffix(part, "'") {
+				quotedArg = strings.TrimSuffix(quotedArg, "'")
+				args = append(args, quotedArg)
+				quotedArg = ""
+			}
+		} else {
+			args = append(args, part)
+		}
 	}
-	return append([]string{APP_NAME}, arguments...)
+
+	return append([]string{APP_NAME}, args...)
 }
 
 func contains(slice []string, val string) bool {

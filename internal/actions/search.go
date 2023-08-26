@@ -45,7 +45,6 @@ func (s *SearchAction) SearchDoc(ctx *cli.Context) (err error) {
 	queryBody := strings.NewReader(query)
 	reqSettings = append(reqSettings, s.client.Search.WithBody(queryBody))
 
-	fmt.Println(query)
 	if res, err = s.client.Search(reqSettings...); err != nil {
 		return fmt.Errorf("Error when querying the index: %s", err)
 	}
