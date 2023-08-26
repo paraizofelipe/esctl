@@ -10,7 +10,6 @@ import (
 	"github.com/paraizofelipe/elastic_tools/internal/actions"
 	"github.com/paraizofelipe/elastic_tools/internal/config"
 	"github.com/urfave/cli/v2"
-	"github.com/urfave/cli/v2/altsrc"
 )
 
 const APP_NAME = "elastic_tools"
@@ -25,22 +24,7 @@ func NewRootCommand(setup *config.ConfigFile) *cli.App {
 	app.Usage = "Elasticsearch Tools CLI"
 	app.Version = "1.0.0"
 
-	flags := []cli.Flag{
-		altsrc.NewStringSliceFlag(&cli.StringSliceFlag{
-			Name:    "elastic",
-			Aliases: []string{"e"},
-			Value:   cli.NewStringSlice("http://localhost:9200"),
-		}),
-		&cli.StringFlag{
-			Name:       "config-file",
-			Aliases:    []string{"f"},
-			Value:      fmt.Sprintf("%s/.config/elastic_tools/config.toml", os.Getenv("HOME")),
-			HasBeenSet: true,
-		},
-	}
-
 	app.EnableBashCompletion = true
-	app.Before = altsrc.InitInputSourceWithContext(flags, altsrc.NewTomlSourceFromFlagFunc("config-file"))
 
 	esNodes := setup.Elastic
 	esClient, err := actions.CreateClient(esNodes)
@@ -48,7 +32,6 @@ func NewRootCommand(setup *config.ConfigFile) *cli.App {
 		log.Fatalf("Error to create client: %s", err)
 	}
 
-	app.Flags = flags
 	app.Commands = []*cli.Command{
 		NewIndexCommand(esClient),
 		NewSearchCommand(esClient),
@@ -59,6 +42,26 @@ func NewRootCommand(setup *config.ConfigFile) *cli.App {
 	app.CommandNotFound = func(ctx *cli.Context, in string) {
 		fmt.Printf("Ops, command %s unknown\n", in)
 	}
+
+	flags := []cli.Flag{
+		&cli.StringFlag{
+			Name:       "config-file",
+			Aliases:    []string{"f"},
+			Value:      fmt.Sprintf("%s/.config/elastic_tools/config.toml", os.Getenv("HOME")),
+			HasBeenSet: true,
+		},
+		&cli.BoolFlag{
+			Name:    "prompt-mode",
+			Aliases: []string{"m"},
+			Value:   false,
+			Action: func(ctx *cli.Context, b bool) error {
+				pt := NewPrompt(app)
+				pt.Run()
+				return nil
+			},
+		},
+	}
+	app.Flags = flags
 
 	return app
 }
@@ -85,15 +88,6 @@ func parseCLIArguments(input string) []string {
 	}
 
 	return append([]string{APP_NAME}, args...)
-}
-
-func contains(slice []string, val string) bool {
-	for _, item := range slice {
-		if item == val {
-			return true
-		}
-	}
-	return false
 }
 
 func NewPrompt(app *cli.App) (pt *prompt.Prompt) {
@@ -153,6 +147,8 @@ func Execute() {
 	}
 
 	app := NewRootCommand(config)
-	pt := NewPrompt(app)
-	pt.Run()
+	err = app.Run(os.Args)
+	if err != nil {
+		panic(err)
+	}
 }
