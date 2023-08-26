@@ -83,6 +83,7 @@ func (c *CatAction) Aliases(ctx *cli.Context) (err error) {
 func (c *CatAction) Indices(ctx *cli.Context) (err error) {
 	var (
 		res         *esapi.Response
+		columns     = ctx.String("columns")
 		reqSettings = []func(*esapi.CatIndicesRequest){
 			c.client.Cat.Indices.WithV(true),
 		}
@@ -94,6 +95,10 @@ func (c *CatAction) Indices(ctx *cli.Context) (err error) {
 
 	if pretty {
 		reqSettings = append(reqSettings, c.client.Cat.Indices.WithPretty())
+	}
+
+	if columns != "" {
+		reqSettings = append(reqSettings, c.client.Cat.Indices.WithH(columns))
 	}
 
 	if res, err = c.client.Cat.Indices(reqSettings...); err != nil {
