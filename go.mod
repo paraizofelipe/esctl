@@ -1,4 +1,4 @@
-module github.com/paraizofelipe/elastic_tools
+module github.com/paraizofelipe/esctl
 
 go 1.20
 

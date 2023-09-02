@@ -7,7 +7,7 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/paraizofelipe/elastic_tools/internal/file"
+	"github.com/paraizofelipe/esctl/internal/file"
 	"github.com/urfave/cli/v2"
 )
 

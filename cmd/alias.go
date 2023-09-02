@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/paraizofelipe/elastic_tools/internal/actions"
+	"github.com/paraizofelipe/esctl/internal/actions"
 	"github.com/urfave/cli/v2"
 )
 

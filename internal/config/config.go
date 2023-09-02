@@ -7,10 +7,12 @@ import (
 	"github.com/pelletier/go-toml"
 )
 
-const CONFIG_PATH = "%s/.config/elastic_tools/config.toml"
+const CONFIG_PATH = "%s/.config/esctl/config.toml"
 
 type ConfigFile struct {
-	Elastic []string `toml:"elastic"`
+	Elastic  []string `toml:"elastic"`
+	Username string   `toml:"username"`
+	Password string   `toml:"password"`
 }
 
 func Load() (*ConfigFile, error) {

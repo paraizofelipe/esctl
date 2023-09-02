@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/paraizofelipe/elastic_tools/cmd"
+	"github.com/paraizofelipe/esctl/cmd"
 )
 
 func main() {

@@ -5,12 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/paraizofelipe/elastic_tools/internal/actions"
-	"github.com/paraizofelipe/elastic_tools/internal/config"
+	"github.com/paraizofelipe/esctl/internal/actions"
+	"github.com/paraizofelipe/esctl/internal/config"
 	"github.com/urfave/cli/v2"
 )
 
-const APP_NAME = "elastic_tools"
+const APP_NAME = "esctl"
 
 func NewRootCommand(setup *config.ConfigFile) *cli.App {
 	app := cli.NewApp()
@@ -29,14 +29,13 @@ func NewRootCommand(setup *config.ConfigFile) *cli.App {
 		&cli.StringFlag{
 			Name:       "config-file",
 			Aliases:    []string{"f"},
-			Value:      fmt.Sprintf("%s/.config/elastic_tools/config.toml", os.Getenv("HOME")),
+			Value:      fmt.Sprintf("%s/.config/esctl/config.toml", os.Getenv("HOME")),
 			HasBeenSet: true,
 		},
 	}
 	app.Flags = flags
 
-	esNodes := setup.Elastic
-	esClient, err := actions.CreateClient(esNodes)
+	esClient, err := actions.CreateClient(setup)
 	if err != nil {
 		log.Fatalf("Error to create client: %s", err)
 	}

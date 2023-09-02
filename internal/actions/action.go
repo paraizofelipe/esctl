@@ -4,11 +4,14 @@ import (
 	"log"
 
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/paraizofelipe/esctl/internal/config"
 )
 
-func CreateClient(esNodes []string) (esClient *elasticsearch.Client, err error) {
+func CreateClient(setup *config.ConfigFile) (esClient *elasticsearch.Client, err error) {
 	cfg := elasticsearch.Config{
-		Addresses: esNodes,
+		Addresses: setup.Elastic,
+		Username:  setup.Username,
+		Password:  setup.Password,
 	}
 
 	if esClient, err = elasticsearch.NewClient(cfg); err != nil {
