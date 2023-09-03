@@ -7,11 +7,11 @@ import (
 	"github.com/paraizofelipe/esctl/internal/config"
 )
 
-func CreateClient(setup *config.ConfigFile) (esClient *elasticsearch.Client, err error) {
+func CreateClient(host config.Host) (esClient *elasticsearch.Client, err error) {
 	cfg := elasticsearch.Config{
-		Addresses: setup.Elastic,
-		Username:  setup.Username,
-		Password:  setup.Password,
+		Addresses: host.Address,
+		Username:  host.Username,
+		Password:  host.Password,
 	}
 
 	if esClient, err = elasticsearch.NewClient(cfg); err != nil {

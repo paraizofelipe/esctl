@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewSearchCommand(esClient *elasticsearch.Client) *cli.Command {
+func NewSearchCommand() *cli.Command {
 
 	appFlags := []cli.Flag{
 		&cli.BoolFlag{
@@ -22,12 +22,14 @@ func NewSearchCommand(esClient *elasticsearch.Client) *cli.Command {
 		},
 	}
 
-	searcher := actions.NewSearchAction(esClient)
-
 	return &cli.Command{
-		Name:   "search",
-		Usage:  "Search documents in an index",
-		Flags:  appFlags,
-		Action: searcher.SearchDoc,
+		Name:  "search",
+		Usage: "Search documents in an index",
+		Flags: appFlags,
+		Action: func(ctx *cli.Context) error {
+			esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+			searcher := actions.NewSearchAction(esClient)
+			return searcher.SearchDoc(ctx)
+		},
 	}
 }

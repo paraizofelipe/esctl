@@ -13,9 +13,9 @@ import (
 )
 
 type Indexer interface {
-	CreateIndex(*cli.Context) error
-	DeleteIndex(*cli.Context) error
-	GetIndex(*cli.Context) error
+	Create(*cli.Context) error
+	Delete(*cli.Context) error
+	Get(*cli.Context) error
 	AddDoc(*cli.Context) error
 	ListDoc(*cli.Context) error
 	ForceMerge(*cli.Context) error
@@ -32,7 +32,7 @@ func NewIndexAction(esClient *elasticsearch.Client) Indexer {
 	}
 }
 
-func (i *IndexAction) CreateIndex(ctx *cli.Context) (err error) {
+func (i *IndexAction) Create(ctx *cli.Context) (err error) {
 
 	var (
 		indexName    string = ctx.Args().Get(0)
@@ -77,7 +77,7 @@ func (i *IndexAction) CreateIndex(ctx *cli.Context) (err error) {
 	return
 }
 
-func (i *IndexAction) DeleteIndex(ctx *cli.Context) (err error) {
+func (i *IndexAction) Delete(ctx *cli.Context) (err error) {
 	var (
 		args        string = ctx.Args().Get(0)
 		pretty      bool   = ctx.Bool("pretty")
@@ -145,7 +145,7 @@ func (i *IndexAction) ForceMerge(ctx *cli.Context) (err error) {
 	return
 }
 
-func (i *IndexAction) GetIndex(ctx *cli.Context) (err error) {
+func (i *IndexAction) Get(ctx *cli.Context) (err error) {
 	var (
 		arg         string = ctx.Args().Get(0)
 		pretty      bool   = ctx.Bool("pretty")

@@ -15,8 +15,6 @@ func NewTaskCommand(esClient *elasticsearch.Client) *cli.Command {
 		},
 	}
 
-	// catManager := actions.NewTaskAction(esClient)
-
 	return &cli.Command{
 		Name:  "task",
 		Usage: "Manage Elasticsearch background tasks",

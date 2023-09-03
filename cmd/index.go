@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
+func NewIndexCommand() *cli.Command {
 
 	appFlags := []cli.Flag{
 		&cli.BoolFlag{
@@ -18,8 +18,6 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 			Usage:   "Format response as pretty-printed JSON",
 		},
 	}
-
-	indexer := actions.NewIndexAction(esClient)
 
 	return &cli.Command{
 		Name:  "index",
@@ -36,22 +34,38 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 						Aliases: []string{"f"},
 					},
 				},
-				Action: indexer.CreateIndex,
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					indexer := actions.NewIndexAction(esClient)
+					return indexer.Create(ctx)
+				},
 			},
 			{
-				Name:   "delete",
-				Usage:  "Delete an existing index from Elasticsearch",
-				Action: indexer.DeleteIndex,
+				Name:  "delete",
+				Usage: "Delete an existing index from Elasticsearch",
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					indexer := actions.NewIndexAction(esClient)
+					return indexer.Delete(ctx)
+				},
 			},
 			{
-				Name:   "foce-merge",
-				Usage:  "Forces a merge on the shards of one or more indices",
-				Action: indexer.ForceMerge,
+				Name:  "foce-merge",
+				Usage: "Forces a merge on the shards of one or more indices",
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					indexer := actions.NewIndexAction(esClient)
+					return indexer.ForceMerge(ctx)
+				},
 			},
 			{
-				Name:   "get",
-				Usage:  "Get information about a created index",
-				Action: indexer.GetIndex,
+				Name:  "get",
+				Usage: "Get information about a created index",
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					indexer := actions.NewIndexAction(esClient)
+					return indexer.Get(ctx)
+				},
 			},
 			{
 				Name:  "add",
@@ -80,7 +94,11 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 						},
 					},
 				},
-				Action: indexer.AddDoc,
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					indexer := actions.NewIndexAction(esClient)
+					return indexer.AddDoc(ctx)
+				},
 			},
 			{
 				Name:  "bulk",
@@ -99,7 +117,11 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 						},
 					},
 				},
-				Action: indexer.ExecBulkOperation,
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					indexer := actions.NewIndexAction(esClient)
+					return indexer.ExecBulkOperation(ctx)
+				},
 			},
 			{
 				Name:  "list",
@@ -111,7 +133,11 @@ func NewIndexCommand(esClient *elasticsearch.Client) *cli.Command {
 						Aliases: []string{"s"},
 					},
 				},
-				Action: indexer.ListDoc,
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					indexer := actions.NewIndexAction(esClient)
+					return indexer.ListDoc(ctx)
+				},
 			},
 		},
 	}

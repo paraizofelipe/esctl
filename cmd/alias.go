@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewAliasCommand(esClient *elasticsearch.Client) *cli.Command {
+func NewAliasCommand() *cli.Command {
 
 	appFlags := []cli.Flag{
 		&cli.StringFlag{
@@ -26,12 +26,14 @@ func NewAliasCommand(esClient *elasticsearch.Client) *cli.Command {
 		},
 	}
 
-	aliasManager := actions.NewAliasAction(esClient)
-
 	return &cli.Command{
-		Name:   "alias",
-		Usage:  "Manage Elasticsearch aliases",
-		Flags:  appFlags,
-		Action: aliasManager.UpdateAlias,
+		Name:  "alias",
+		Usage: "Manage Elasticsearch aliases",
+		Flags: appFlags,
+		Action: func(ctx *cli.Context) error {
+			esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+			aliasManager := actions.NewAliasAction(esClient)
+			return aliasManager.UpdateAlias(ctx)
+		},
 	}
 }

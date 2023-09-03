@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
+func NewCatCommand() *cli.Command {
 
 	appFlags := []cli.Flag{
 		&cli.BoolFlag{
@@ -16,17 +16,14 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 		},
 	}
 
-	catManager := actions.NewCatAction(esClient)
-
 	return &cli.Command{
 		Name:  "cat",
 		Usage: "Manage Elasticsearch aliases and diagnostic information",
 		Flags: appFlags,
 		Subcommands: []*cli.Command{
 			{
-				Name:   "indices",
-				Usage:  "List all indices in Elasticsearch",
-				Action: catManager.Indices,
+				Name:  "indices",
+				Usage: "List all indices in Elasticsearch",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "columns",
@@ -40,11 +37,15 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Usage:   "Show detailed information about indices",
 					},
 				},
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.Indices(ctx)
+				},
 			},
 			{
-				Name:   "aliases",
-				Usage:  "List all aliases in Elasticsearch",
-				Action: catManager.Aliases,
+				Name:  "aliases",
+				Usage: "List all aliases in Elasticsearch",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "columns",
@@ -58,11 +59,15 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Usage:   "Show detailed information about aliases",
 					},
 				},
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.Aliases(ctx)
+				},
 			},
 			{
-				Name:   "nodes",
-				Usage:  "List all nodes in Elasticsearch cluster",
-				Action: catManager.Nodes,
+				Name:  "nodes",
+				Usage: "List all nodes in Elasticsearch cluster",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "columns",
@@ -75,6 +80,11 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Aliases: []string{"d"},
 						Usage:   "Show detailed information about nodes",
 					},
+				},
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.Nodes(ctx)
 				},
 			},
 			{
@@ -98,7 +108,11 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Usage:   "Show detailed information about shards",
 					},
 				},
-				Action: catManager.Shards,
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.Shards(ctx)
+				},
 			},
 			{
 				Name:  "thread-pool",
@@ -121,12 +135,15 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Usage:   "Show detailed information about thread pools",
 					},
 				},
-				Action: catManager.ThreadPool,
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.ThreadPool(ctx)
+				},
 			},
 			{
-				Name:   "pending-tasks",
-				Usage:  "List pending tasks in Elasticsearch",
-				Action: catManager.PendingTasks,
+				Name:  "pending-tasks",
+				Usage: "List pending tasks in Elasticsearch",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "describe",
@@ -135,29 +152,15 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Usage:   "Show detailed information about pending tasks",
 					},
 				},
-			},
-			{
-				Name:   "tasks",
-				Usage:  "Returns information about tasks currently executing in the cluster, similar to the task management API",
-				Action: catManager.Tasks,
-				Flags: []cli.Flag{
-					&cli.BoolFlag{
-						Name:    "describe",
-						Value:   false,
-						Aliases: []string{"d"},
-						Usage:   "Show detailed information about pending tasks",
-					},
-					&cli.StringFlag{
-						Name:    "columns",
-						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
-					},
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.PendingTasks(ctx)
 				},
 			},
 			{
-				Name:   "health",
-				Usage:  "Returns the health status of a cluster, similar to the cluster health API",
-				Action: catManager.Health,
+				Name:  "tasks",
+				Usage: "Returns information about tasks currently executing in the cluster, similar to the task management API",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "describe",
@@ -171,11 +174,15 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Usage:   "Comma-separated list of columns to display",
 					},
 				},
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.Tasks(ctx)
+				},
 			},
 			{
-				Name:   "repositories",
-				Usage:  "Returns the snapshot repositories for a cluster",
-				Action: catManager.Repositories,
+				Name:  "health",
+				Usage: "Returns the health status of a cluster, similar to the cluster health API",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "describe",
@@ -189,11 +196,37 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Usage:   "Comma-separated list of columns to display",
 					},
 				},
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.Health(ctx)
+				},
 			},
 			{
-				Name:   "snapshots",
-				Usage:  "Returns information about the snapshots stored in one or more repositories",
-				Action: catManager.Snapshots,
+				Name:  "repositories",
+				Usage: "Returns the snapshot repositories for a cluster",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:    "describe",
+						Value:   false,
+						Aliases: []string{"d"},
+						Usage:   "Show detailed information about pending tasks",
+					},
+					&cli.StringFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
+				},
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.Repositories(ctx)
+				},
+			},
+			{
+				Name:  "snapshots",
+				Usage: "Returns information about the snapshots stored in one or more repositories",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:    "describe",
@@ -211,6 +244,11 @@ func NewCatCommand(esClient *elasticsearch.Client) *cli.Command {
 						Aliases: []string{"r"},
 						Usage:   "Comma-separated list of snapshot repositories used",
 					},
+				},
+				Action: func(ctx *cli.Context) error {
+					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
+					catManager := actions.NewCatAction(esClient)
+					return catManager.Snapshots(ctx)
 				},
 			},
 		},
