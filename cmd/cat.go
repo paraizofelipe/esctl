@@ -1,31 +1,22 @@
 package cmd
 
 import (
-	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/paraizofelipe/esctl/internal/actions"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/urfave/cli/v2"
 )
 
 func NewCatCommand() *cli.Command {
 
-	appFlags := []cli.Flag{
-		&cli.BoolFlag{
-			Name:    "pretty",
-			Aliases: []string{"p"},
-			Usage:   "Format response as pretty-printed JSON",
-		},
-	}
-
 	return &cli.Command{
 		Name:  "cat",
-		Usage: "Manage Elasticsearch aliases and diagnostic information",
-		Flags: appFlags,
+		Usage: "Show information about Elasticsearch cluster in text mode",
 		Subcommands: []*cli.Command{
 			{
 				Name:  "indices",
 				Usage: "List all indices in Elasticsearch",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
@@ -38,16 +29,22 @@ func NewCatCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.Indices(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatIndicesRequest{
+						V:      esapi.BoolPtr(true),
+						Pretty: true,
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
 				Name:  "aliases",
 				Usage: "List all aliases in Elasticsearch",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
@@ -60,16 +57,22 @@ func NewCatCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.Aliases(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatAliasesRequest{
+						V:      esapi.BoolPtr(true),
+						Pretty: true,
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
 				Name:  "nodes",
 				Usage: "List all nodes in Elasticsearch cluster",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
@@ -82,21 +85,27 @@ func NewCatCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.Nodes(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatNodesRequest{
+						V:      esapi.BoolPtr(true),
+						Pretty: true,
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
 				Name:  "shards",
 				Usage: "List shard information for indices",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "index",
 						Aliases: []string{"i"},
 						Usage:   "Filter by index name",
 					},
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
@@ -109,21 +118,29 @@ func NewCatCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.Shards(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+
+					request := &esapi.CatShardsRequest{
+						V:      esapi.BoolPtr(true),
+						Pretty: true,
+						Index:  ctx.StringSlice("index"),
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
 				Name:  "thread-pool",
 				Usage: "List thread pool statistics",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "thread-pool-pattern",
 						Aliases: []string{"p"},
 						Usage:   "Filter by thread pool pattern",
 					},
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
@@ -136,9 +153,16 @@ func NewCatCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.ThreadPool(ctx)
+					threadPoolPatterns := ctx.StringSlice("thread-pool-pattern")
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatThreadPoolRequest{
+						Pretty:             true,
+						ThreadPoolPatterns: threadPoolPatterns,
+						H:                  columns,
+						Help:               esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
@@ -151,11 +175,22 @@ func NewCatCommand() *cli.Command {
 						Aliases: []string{"d"},
 						Usage:   "Show detailed information about pending tasks",
 					},
+					&cli.StringSliceFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.PendingTasks(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatPendingTasksRequest{
+						V:      esapi.BoolPtr(true),
+						Pretty: true,
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
@@ -168,16 +203,22 @@ func NewCatCommand() *cli.Command {
 						Aliases: []string{"d"},
 						Usage:   "Show detailed information about pending tasks",
 					},
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.Tasks(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatTasksRequest{
+						V:      esapi.BoolPtr(true),
+						Pretty: true,
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
@@ -190,16 +231,22 @@ func NewCatCommand() *cli.Command {
 						Aliases: []string{"d"},
 						Usage:   "Show detailed information about pending tasks",
 					},
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.Health(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatHealthRequest{
+						V:      esapi.BoolPtr(true),
+						Pretty: true,
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
@@ -212,16 +259,22 @@ func NewCatCommand() *cli.Command {
 						Aliases: []string{"d"},
 						Usage:   "Show detailed information about pending tasks",
 					},
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.Repositories(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatRepositoriesRequest{
+						V:      esapi.BoolPtr(true),
+						Pretty: true,
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 			{
@@ -234,21 +287,28 @@ func NewCatCommand() *cli.Command {
 						Aliases: []string{"d"},
 						Usage:   "Show detailed information about pending tasks",
 					},
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
 						Usage:   "Comma-separated list of columns to display",
 					},
-					&cli.StringFlag{
+					&cli.StringSliceFlag{
 						Name:    "repository",
 						Aliases: []string{"r"},
 						Usage:   "Comma-separated list of snapshot repositories used",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					esClient := ctx.Context.Value("esClient").(*elasticsearch.Client)
-					catManager := actions.NewCatAction(esClient)
-					return catManager.Snapshots(ctx)
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatSnapshotsRequest{
+						V:          esapi.BoolPtr(true),
+						H:          columns,
+						Help:       esapi.BoolPtr(ctx.Bool("describe")),
+						Pretty:     true,
+						Repository: ctx.StringSlice("repository"),
+					}
+					return es.ExecRequest(ctx.Context, request)
 				},
 			},
 		},

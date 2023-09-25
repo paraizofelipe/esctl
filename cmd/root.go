@@ -6,8 +6,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/paraizofelipe/esctl/internal/actions"
+	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/paraizofelipe/esctl/internal/config"
+
 	"github.com/urfave/cli/v2"
 )
 
@@ -59,6 +61,7 @@ func NewRootCommand() *cli.App {
 		}
 
 		var host config.Host
+		var config elasticsearch.Config
 
 		hostName := ctx.String("host-name")
 		if hostName != "" {
@@ -67,20 +70,21 @@ func NewRootCommand() *cli.App {
 			host = setup.DefaultHost()
 		}
 
-		esClient, err := actions.CreateClient(host)
-		if err != nil {
-			log.Fatalf("Error to create client: %s", err)
+		config = elasticsearch.Config{
+			Addresses: host.Address,
+			Username:  host.Username,
+			Password:  host.Password,
 		}
-		ctx.Context = context.WithValue(ctx.Context, "esClient", esClient)
+		es := client.NewElastic(config)
+		ctx.Context = context.WithValue(ctx.Context, "esClient", es)
 
 		return nil
 	}
 
 	app.Commands = []*cli.Command{
-		NewIndexCommand(),
 		NewSearchCommand(),
-		NewAliasCommand(),
 		NewCatCommand(),
+		NewGetCommand(),
 	}
 
 	return app

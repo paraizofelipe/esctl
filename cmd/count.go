@@ -6,23 +6,25 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewGetTaskCommand() *cli.Command {
+func NewGetCountCommand() *cli.Command {
 	return &cli.Command{
-		Name:  "task",
-		Usage: "Get task by id",
+		Name:  "count",
+		Usage: "Count documents matching a query",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:     "id",
-				Aliases:  []string{"i"},
-				Usage:    "Task id",
+				Name:     "query",
+				Aliases:  []string{"q"},
+				Usage:    "Query to be executed",
 				Required: false,
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			indexPatterns := ctx.Args().Slice()
 			es := ctx.Context.Value("esClient").(*client.Elastic)
-			request := &esapi.TasksGetRequest{
+			request := &esapi.CountRequest{
 				Pretty: true,
-				TaskID: ctx.String("id"),
+				Index:  indexPatterns,
+				Query:  ctx.String("query"),
 			}
 			return es.ExecRequest(ctx.Context, request)
 		},
