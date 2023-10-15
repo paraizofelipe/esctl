@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	"github.com/elastic/go-elasticsearch/v8"
@@ -52,7 +53,12 @@ func (es *Elastic) ExecRequest(ctx context.Context, request esapi.Request) (err 
 		return fmt.Errorf("[REQ-ERROR]: %s", res.String())
 	}
 
-	fmt.Println(res.String())
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(string(b))
 
 	return
 }

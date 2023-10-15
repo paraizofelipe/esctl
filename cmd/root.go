@@ -85,6 +85,10 @@ func NewRootCommand() *cli.App {
 		NewSearchCommand(),
 		NewCatCommand(),
 		NewGetCommand(),
+		NewCreateCommand(),
+		NewChangeCommand(),
+		NewDeleteCommand(),
+		NewTaskCommand(),
 	}
 
 	return app

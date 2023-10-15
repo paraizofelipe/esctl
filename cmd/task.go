@@ -8,7 +8,7 @@ import (
 
 func NewGetTaskCommand() *cli.Command {
 	return &cli.Command{
-		Name:  "task",
+		Name:  "get",
 		Usage: "Get task by id",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -25,6 +25,64 @@ func NewGetTaskCommand() *cli.Command {
 				TaskID: ctx.String("id"),
 			}
 			return es.ExecRequest(ctx.Context, request)
+		},
+	}
+}
+
+func NewCancelTaskCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "cancel",
+		Usage: "Cancel task by id",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:     "id",
+				Aliases:  []string{"i"},
+				Usage:    "Task id",
+				Required: false,
+			},
+		},
+		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(*client.Elastic)
+			request := &esapi.TasksCancelRequest{
+				Pretty: true,
+				TaskID: ctx.String("id"),
+			}
+			return es.ExecRequest(ctx.Context, request)
+		},
+	}
+}
+
+func NewListTaskCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "list",
+		Usage: "List tasks",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:     "nodes",
+				Aliases:  []string{"n"},
+				Usage:    "Node id",
+				Required: false,
+			},
+		},
+		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(*client.Elastic)
+			request := &esapi.TasksListRequest{
+				Pretty: true,
+				Nodes:  ctx.StringSlice("nodes"),
+			}
+			return es.ExecRequest(ctx.Context, request)
+		},
+	}
+}
+
+func NewTaskCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "task",
+		Usage: "Manage tasks",
+		Subcommands: []*cli.Command{
+			NewGetTaskCommand(),
+			NewCancelTaskCommand(),
+			NewListTaskCommand(),
 		},
 	}
 }

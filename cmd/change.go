@@ -1,0 +1,16 @@
+package cmd
+
+import (
+	"github.com/urfave/cli/v2"
+)
+
+func NewChangeCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "change",
+		Usage: "Change resources in Elasticsearch",
+		Subcommands: []*cli.Command{
+			NewChangeIndexAliasCommand(),
+			NewChangeIndexMappingCommand(),
+		},
+	}
+}
