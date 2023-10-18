@@ -83,8 +83,8 @@ func NewRootCommand() *cli.App {
 
 	app.Commands = []*cli.Command{
 		NewSearchCommand(),
-		NewCatCommand(),
 		NewGetCommand(),
+		NewDescribeCommand(),
 		NewCreateCommand(),
 		NewChangeCommand(),
 		NewDeleteCommand(),

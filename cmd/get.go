@@ -4,10 +4,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewGetCommand() *cli.Command {
+func NewDescribeCommand() *cli.Command {
 	return &cli.Command{
-		Name:  "get",
-		Usage: "Get information about a created resources",
+		Name:    "describe",
+		Aliases: []string{"desc"},
+		Usage:   "Describe information about a created resources",
 		Subcommands: []*cli.Command{
 			NewGetIndexCommand(),
 			NewGetDocCommand(),

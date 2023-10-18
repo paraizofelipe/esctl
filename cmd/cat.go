@@ -6,10 +6,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewCatCommand() *cli.Command {
+func NewGetCommand() *cli.Command {
 
 	return &cli.Command{
-		Name:  "cat",
+		Name:  "get",
 		Usage: "Show information about Elasticsearch cluster in text mode",
 		Subcommands: []*cli.Command{
 			{
