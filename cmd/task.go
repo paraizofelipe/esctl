@@ -6,9 +6,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewGetTaskCommand() *cli.Command {
+func DescribeTaskCommand() *cli.Command {
 	return &cli.Command{
-		Name:  "get",
+		Name:  "tasks",
 		Usage: "Get task by id",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -29,7 +29,7 @@ func NewGetTaskCommand() *cli.Command {
 	}
 }
 
-func NewCancelTaskCommand() *cli.Command {
+func CancelTaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "cancel",
 		Usage: "Cancel task by id",
@@ -52,7 +52,7 @@ func NewCancelTaskCommand() *cli.Command {
 	}
 }
 
-func NewListTaskCommand() *cli.Command {
+func GetTaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "list",
 		Usage: "List tasks",
@@ -75,14 +75,14 @@ func NewListTaskCommand() *cli.Command {
 	}
 }
 
-func NewTaskCommand() *cli.Command {
+func TaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "task",
 		Usage: "Manage tasks",
 		Subcommands: []*cli.Command{
-			NewGetTaskCommand(),
-			NewCancelTaskCommand(),
-			NewListTaskCommand(),
+			DescribeTaskCommand(),
+			CancelTaskCommand(),
+			GetTaskCommand(),
 		},
 	}
 }

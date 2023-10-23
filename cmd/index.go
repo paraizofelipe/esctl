@@ -8,7 +8,38 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewGetIndexAliasCommand() *cli.Command {
+func DescribeIndexDocCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "doc",
+		Usage: "Describe document by id",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:     "id",
+				Aliases:  []string{"i"},
+				Usage:    "Document id",
+				Required: true,
+			},
+			&cli.StringSliceFlag{
+				Name:     "fields",
+				Aliases:  []string{"f"},
+				Usage:    "Comma-separated list of stored fields to return in the response",
+				Required: false,
+			},
+		},
+		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(*client.Elastic)
+			docRequest := &esapi.GetRequest{
+				Pretty:         true,
+				DocumentID:     ctx.String("id"),
+				Index:          ctx.Args().Get(0),
+				SourceIncludes: ctx.StringSlice("fields"),
+			}
+			return es.ExecRequest(ctx.Context, docRequest)
+		},
+	}
+}
+
+func DescribeIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
 		Usage: "Get information about a created index alias",
@@ -24,7 +55,7 @@ func NewGetIndexAliasCommand() *cli.Command {
 	}
 }
 
-func NewChangeIndexAliasCommand() *cli.Command {
+func ChangeIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
 		Usage: "Change index alias",
@@ -49,7 +80,7 @@ func NewChangeIndexAliasCommand() *cli.Command {
 	}
 }
 
-func NewDeleteIndexAliasCommand() *cli.Command {
+func DeleteIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
 		Usage: "Delete index alias",
@@ -67,7 +98,7 @@ func NewDeleteIndexAliasCommand() *cli.Command {
 	}
 }
 
-func NewGetIndexSettingsCommand() *cli.Command {
+func DescribeIndexSettingsCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "settings",
 		Usage: "Get settings for a created index",
@@ -83,7 +114,7 @@ func NewGetIndexSettingsCommand() *cli.Command {
 	}
 }
 
-func NewGetIndexMappingCommand() *cli.Command {
+func DescribeIndexMappingCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "mapping",
 		Usage: "Get mapping for a created index",
@@ -99,7 +130,7 @@ func NewGetIndexMappingCommand() *cli.Command {
 	}
 }
 
-func NewChangeIndexMappingCommand() *cli.Command {
+func ChangeIndexMappingCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "mapping",
 		Usage: "Change index mapping",
@@ -124,7 +155,7 @@ func NewChangeIndexMappingCommand() *cli.Command {
 	}
 }
 
-func NewGetIndexStatsCommand() *cli.Command {
+func DescribeIndexStatsCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "stats",
 		Usage: "Get stats for a created index",
@@ -140,7 +171,7 @@ func NewGetIndexStatsCommand() *cli.Command {
 	}
 }
 
-func NewGetIndexCommand() *cli.Command {
+func DescribeIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
 		Usage: "Get information about a created index",
@@ -153,15 +184,44 @@ func NewGetIndexCommand() *cli.Command {
 			return es.ExecRequest(ctx.Context, indexRequest)
 		},
 		Subcommands: []*cli.Command{
-			NewGetIndexAliasCommand(),
-			NewGetIndexStatsCommand(),
-			NewGetIndexMappingCommand(),
-			NewGetIndexSettingsCommand(),
+			DescribeIndexDocCommand(),
+			DescribeIndexAliasCommand(),
+			DescribeIndexStatsCommand(),
+			DescribeIndexMappingCommand(),
+			DescribeIndexSettingsCommand(),
 		},
 	}
 }
 
-func NewCreateIndexCommand() *cli.Command {
+func CreateIndexDocCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "doc",
+		Usage: "Add document to index",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "id",
+				Aliases: []string{"i"},
+			},
+			&cli.StringFlag{
+				Name:    "body",
+				Aliases: []string{"b"},
+			},
+		},
+		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(*client.Elastic)
+			body := strings.NewReader(ctx.String("body"))
+			request := &esapi.IndexRequest{
+				Pretty:     true,
+				Index:      ctx.Args().Get(0),
+				DocumentID: ctx.String("id"),
+				Body:       body,
+			}
+			return es.ExecRequest(ctx.Context, request)
+		},
+	}
+}
+
+func CreateIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
 		Usage: "Create index",
@@ -181,10 +241,13 @@ func NewCreateIndexCommand() *cli.Command {
 			}
 			return es.ExecRequest(ctx.Context, request)
 		},
+		Subcommands: []*cli.Command{
+			CreateIndexDocCommand(),
+		},
 	}
 }
 
-func NewDeleteIndexCommand() *cli.Command {
+func DeleteIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
 		Usage: "Delete index",

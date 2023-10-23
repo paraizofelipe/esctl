@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewGetCountCommand() *cli.Command {
+func DescribeCountCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "count",
 		Usage: "Count documents matching a query",

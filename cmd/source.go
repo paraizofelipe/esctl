@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewGetSourceCommand() *cli.Command {
+func NewDescribeSourceCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "source",
 		Usage: "Get document source by id",

@@ -82,13 +82,13 @@ func NewRootCommand() *cli.App {
 	}
 
 	app.Commands = []*cli.Command{
-		NewSearchCommand(),
-		NewGetCommand(),
-		NewDescribeCommand(),
-		NewCreateCommand(),
-		NewChangeCommand(),
-		NewDeleteCommand(),
-		NewTaskCommand(),
+		SearchCommand(),
+		GetCommand(),
+		DescribeCommand(),
+		CreateCommand(),
+		ChangeCommand(),
+		DeleteCommand(),
+		TaskCommand(),
 	}
 
 	return app
