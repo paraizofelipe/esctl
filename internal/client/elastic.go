@@ -15,11 +15,11 @@ type Elastic struct {
 	client *elasticsearch.Client
 }
 
-func CreateClient(host config.Host) (esClient *elasticsearch.Client, err error) {
+func CreateClient(cluster config.Cluster) (esClient *elasticsearch.Client, err error) {
 	cfg := elasticsearch.Config{
-		Addresses: host.Address,
-		Username:  host.Username,
-		Password:  host.Password,
+		Addresses: cluster.Address,
+		Username:  cluster.Username,
+		Password:  cluster.Password,
 	}
 
 	if esClient, err = elasticsearch.NewClient(cfg); err != nil {

@@ -1,12 +1,14 @@
 package config
 
 import (
-	"github.com/pelletier/go-toml"
+	"os"
+
+	"github.com/pelletier/go-toml/v2"
 )
 
 const CONFIG_PATH = "%s/.config/esctl/config.toml"
 
-type Host struct {
+type Cluster struct {
 	Name     string   `toml:"name"`
 	Address  []string `toml:"address"`
 	Username string   `toml:"username"`
@@ -15,35 +17,47 @@ type Host struct {
 }
 
 type Setup struct {
-	Host []Host `toml:"host"`
+	Cluster []Cluster `toml:"cluster"`
 }
 
-func Load(filePath string) (*Setup, error) {
-	configFile, err := toml.LoadFile(filePath)
+func ReadSetup(filePath string) (setup Setup, err error) {
+	content, err := os.ReadFile(filePath)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var setup Setup
-	if err := configFile.Unmarshal(&setup); err != nil {
-		return nil, err
+	if err = toml.Unmarshal(content, &setup); err != nil {
+		return
 	}
 
-	return &setup, nil
+	return
 }
 
-func (s *Setup) HostByName(name string) Host {
-	for _, host := range s.Host {
-		if host.Name == name {
-			return host
+func WriteSetup(setup Setup, filePath string) (err error) {
+	res, err := toml.Marshal(setup)
+	if err != nil {
+		return
+	}
+
+	err = os.WriteFile(filePath, res, 0644)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (s *Setup) ClusterByName(name string) Cluster {
+	for _, cluster := range s.Cluster {
+		if cluster.Name == name {
+			return cluster
 		}
 	}
-	return Host{}
+	return Cluster{}
 }
 
-func (s *Setup) DefaultHost() (host Host) {
-	for _, host = range s.Host {
-		if host.Default {
+func (s *Setup) DefaultCluster() (cluster Cluster) {
+	for _, cluster = range s.Cluster {
+		if cluster.Default {
 			return
 		}
 	}
