@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/elastic/go-elasticsearch/v8 v8.9.0
-	github.com/pelletier/go-toml v1.9.5
+	github.com/pelletier/go-toml/v2 v2.1.0
 	github.com/urfave/cli/v2 v2.25.7
 )
 
