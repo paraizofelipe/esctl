@@ -84,6 +84,13 @@ func DeleteIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
 		Usage: "Delete index alias",
+		Flags: []cli.Flag{
+			&cli.StringSliceFlag{
+				Name:     "name",
+				Aliases:  []string{"n"},
+				Required: true,
+			},
+		},
 		Action: func(ctx *cli.Context) error {
 			es := ctx.Context.Value("esClient").(*client.Elastic)
 			indexPatterns := ctx.Args().Slice()
@@ -259,6 +266,9 @@ func DeleteIndexCommand() *cli.Command {
 				Index:  indexPatterns,
 			}
 			return es.ExecRequest(ctx.Context, request)
+		},
+		Subcommands: []*cli.Command{
+			DeleteIndexAliasCommand(),
 		},
 	}
 }
