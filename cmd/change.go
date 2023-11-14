@@ -11,6 +11,8 @@ func ChangeCommand() *cli.Command {
 		Subcommands: []*cli.Command{
 			ChangeIndexAliasCommand(),
 			ChangeIndexMappingCommand(),
+			ChangeSecurityCommand(),
+			ChangeConfigCommand(),
 		},
 	}
 }

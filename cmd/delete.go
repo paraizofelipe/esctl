@@ -10,7 +10,7 @@ func DeleteCommand() *cli.Command {
 		Usage: "Delete resources in Elasticsearch",
 		Subcommands: []*cli.Command{
 			DeleteIndexCommand(),
-			DeleteIndexAliasCommand(),
+			DeleteSecurityCommand(),
 		},
 	}
 }

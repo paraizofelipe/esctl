@@ -8,7 +8,7 @@ import (
 
 func DescribeTaskCommand() *cli.Command {
 	return &cli.Command{
-		Name:  "tasks",
+		Name:  "task",
 		Usage: "Get task by id",
 		Flags: []cli.Flag{
 			&cli.StringFlag{

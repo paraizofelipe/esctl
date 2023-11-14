@@ -25,7 +25,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about indices",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -53,7 +52,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about aliases",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -81,7 +79,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about nodes",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -114,7 +111,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about shards",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -149,7 +145,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about thread pools",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -173,7 +168,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about pending tasks",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
@@ -201,7 +195,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about pending tasks",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
@@ -229,7 +222,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about pending tasks",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
@@ -257,7 +249,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about pending tasks",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
@@ -278,6 +269,39 @@ func GetCommand() *cli.Command {
 				},
 			},
 			{
+				Name:  "allocation",
+				Usage: "Returns information about disk usage and shard allocation",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:    "describe",
+						Value:   false,
+						Aliases: []string{"d"},
+					},
+					&cli.StringSliceFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Comma-separated list of columns to display",
+					},
+					&cli.StringSliceFlag{
+						Name:    "node",
+						Aliases: []string{"n"},
+						Usage:   "Comma-separated list of node IDs or names to limit the returned information",
+					},
+				},
+				Action: func(ctx *cli.Context) error {
+					es := ctx.Context.Value("esClient").(*client.Elastic)
+					columns := ctx.StringSlice("columns")
+					request := &esapi.CatAllocationRequest{
+						V:      esapi.BoolPtr(true),
+						H:      columns,
+						Help:   esapi.BoolPtr(ctx.Bool("describe")),
+						Pretty: true,
+						NodeID: ctx.StringSlice("node"),
+					}
+					return es.ExecRequest(ctx.Context, request)
+				},
+			},
+			{
 				Name:  "snapshots",
 				Usage: "Returns information about the snapshots stored in one or more repositories",
 				Flags: []cli.Flag{
@@ -285,7 +309,6 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-						Usage:   "Show detailed information about pending tasks",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
@@ -311,6 +334,7 @@ func GetCommand() *cli.Command {
 					return es.ExecRequest(ctx.Context, request)
 				},
 			},
+			GetConfigCommand(),
 		},
 	}
 }

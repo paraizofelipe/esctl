@@ -36,7 +36,7 @@ func NewRootCommand() *cli.App {
 			HasBeenSet: true,
 		},
 		&cli.StringFlag{
-			Name:    "host-name",
+			Name:    "cluster-name",
 			Aliases: []string{"n"},
 		},
 		&cli.StringFlag{
@@ -55,25 +55,25 @@ func NewRootCommand() *cli.App {
 	app.Flags = flags
 	app.Before = func(ctx *cli.Context) error {
 		filePath := ctx.String("config-file")
-		setup, err := config.Load(filePath)
+		setup, err := config.ReadSetup(filePath)
 		if err != nil {
 			log.Fatalf("Error while loading configuration file: %s", err)
 		}
 
-		var host config.Host
+		var cluster config.Cluster
 		var config elasticsearch.Config
 
-		hostName := ctx.String("host-name")
-		if hostName != "" {
-			host = setup.HostByName(hostName)
+		clusterName := ctx.String("cluster-name")
+		if clusterName != "" {
+			cluster = setup.ClusterByName(clusterName)
 		} else {
-			host = setup.DefaultHost()
+			cluster = setup.DefaultCluster()
 		}
 
 		config = elasticsearch.Config{
-			Addresses: host.Address,
-			Username:  host.Username,
-			Password:  host.Password,
+			Addresses: cluster.Address,
+			Username:  cluster.Username,
+			Password:  cluster.Password,
 		}
 		es := client.NewElastic(config)
 		ctx.Context = context.WithValue(ctx.Context, "esClient", es)
@@ -82,6 +82,7 @@ func NewRootCommand() *cli.App {
 	}
 
 	app.Commands = []*cli.Command{
+		ApplyCommand(),
 		SearchCommand(),
 		GetCommand(),
 		DescribeCommand(),

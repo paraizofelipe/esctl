@@ -13,6 +13,7 @@ func DescribeCommand() *cli.Command {
 			DescribeIndexCommand(),
 			DescribeTaskCommand(),
 			DescribeCountCommand(),
+			DescribeSecurityCommand(),
 		},
 	}
 }
