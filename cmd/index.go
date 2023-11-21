@@ -4,9 +4,19 @@ import (
 	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/elastic/go-elasticsearch/v8/esutil"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/urfave/cli/v2"
 )
+
+type AliasAction struct {
+	Actions []types.IndicesAction `json:"actions"`
+}
+
+type Mapping struct {
+	M types.Property `json:"mappings"`
+}
 
 func DescribeIndexDocCommand() *cli.Command {
 	return &cli.Command{
@@ -53,6 +63,16 @@ func DescribeIndexAliasCommand() *cli.Command {
 			return es.ExecRequest(ctx.Context, request)
 		},
 	}
+}
+
+func ApplyIndexAlias(ctx *cli.Context, actions AliasAction) error {
+	es := ctx.Context.Value("esClient").(*client.Elastic)
+	body := esutil.NewJSONReader(actions)
+	request := &esapi.IndicesUpdateAliasesRequest{
+		Pretty: true,
+		Body:   body,
+	}
+	return es.ExecRequest(ctx.Context, request)
 }
 
 func ChangeIndexAliasCommand() *cli.Command {
@@ -135,6 +155,17 @@ func DescribeIndexMappingCommand() *cli.Command {
 			return es.ExecRequest(ctx.Context, request)
 		},
 	}
+}
+
+func ApplyIndexMapping(ctx *cli.Context, indexName []string, actions types.Property) error {
+	es := ctx.Context.Value("esClient").(*client.Elastic)
+	body := esutil.NewJSONReader(actions)
+	request := &esapi.IndicesPutMappingRequest{
+		Index:  indexName,
+		Pretty: true,
+		Body:   body,
+	}
+	return es.ExecRequest(ctx.Context, request)
 }
 
 func ChangeIndexMappingCommand() *cli.Command {

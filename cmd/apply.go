@@ -10,8 +10,9 @@ import (
 )
 
 type ApplyFile struct {
-	Kind string          `json:"kind"`
-	Body json.RawMessage `json:"body"`
+	Kind  string          `json:"kind"`
+	Index json.RawMessage `json:"index,omitempty"`
+	Body  json.RawMessage `json:"body"`
 }
 
 func ApplyCommand() *cli.Command {
@@ -53,6 +54,30 @@ func ApplyCommand() *cli.Command {
 					return err
 				}
 				err = ApplyClusterReroute(ctx, rerouteCommand)
+				if err != nil {
+					return err
+				}
+			case "IndexAlias":
+				var bodyActions AliasAction
+				if err := json.Unmarshal(applyFile.Body, &bodyActions); err != nil {
+					return err
+				}
+				err = ApplyIndexAlias(ctx, bodyActions)
+				if err != nil {
+					return err
+				}
+			case "IndexMapping":
+				var (
+					index          []string
+					bodyProperties types.Property
+				)
+				if err := json.Unmarshal(applyFile.Index, &index); err != nil {
+					return err
+				}
+				if err := json.Unmarshal(applyFile.Body, &bodyProperties); err != nil {
+					return err
+				}
+				err = ApplyIndexMapping(ctx, index, bodyProperties)
 				if err != nil {
 					return err
 				}
