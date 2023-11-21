@@ -1,4 +1,3 @@
-# esctl
 
 This project aims to provide an alternative for managing Elasticsearch clusters, offering a Command Line Interface (CLI) for manipulating resources through its REST API.
 
@@ -77,6 +76,113 @@ $ esctl -n 'local' search --query '{}'
 
 ## apply
 
+Apply cluster reroute:
+
 ```bash
-$ esctl -n 'local' apply -f 'CONFIG_FILE'
+$ esctl -n 'local' apply -f reroute.json
+```
+
+File `users.json`:
+
+```json
+{
+  "kind": "ClusterReroute",
+  "body": {
+    "commands": [
+      {
+        "allocate_replica": {
+          "index": "index1",
+          "shard": 0,
+          "node": "es-node-01"
+        }
+      }
+    ]
+  }
+}
+
+```
+
+Apply new users:
+
+```bash
+$ esctl -n 'local' apply -f users.json
+```
+
+File `users.json`:
+
+```json
+{
+  "kind": "SecurityUser",
+  "body": [
+    {
+      "username": "test",
+      "full_name": "User Test",
+      "email": "es.test@esctl.com",
+      "password": "icecream123",
+      "roles": [
+        "admin"
+      ],
+      "metadata": {}
+    }
+  ]
+}
+```
+
+Apply actions to index aliases:
+
+```bash
+$ esctl -n 'local' apply -f alias.json
+```
+
+File `alias.json`
+
+```json
+{
+  "kind": "IndexAlias",
+  "body": {
+    "actions": [
+      {
+        "add": {
+          "index": "index1",
+          "alias": "alias1"
+        }
+      },
+      {
+        "add": {
+          "index": "index2",
+          "alias": "alias1"
+        }
+      }
+    ]
+  }
+}
+```
+
+Apply mapping in index:
+```bash
+$ esctl -n 'local' apply -f mapping.json
+```
+
+File `mapping.json`:
+
+```json
+{
+  "kind": "IndexMapping",
+  "index": [
+    "index1"
+  ],
+  "body": {
+    "properties": {
+      "name": {
+        "type": "keyword"
+      },
+      "description": {
+        "type": "text"
+      },
+      "age": {
+        "type": "integer"
+      }
+    }
+  }
+}
 ```
