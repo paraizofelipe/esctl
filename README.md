@@ -1,13 +1,27 @@
+# esctl
 
+## Introduction
+
+esctl is a Command Line Interface (CLI) tool designed to simplify the management of Elasticsearch clusters. By leveraging Elasticsearch's REST API, esctl provides a comprehensive set of commands to manipulate various resources effectively. Whether you're handling indices, shards, or security settings, esctl streamlines your interactions with Elasticsearch clusters.
 This project aims to provide an alternative for managing Elasticsearch clusters, offering a Command Line Interface (CLI) for manipulating resources through its REST API.
 
-# Getting Started
+## Getting Started
 
-TODO
+### Prerequisites
 
-# Commands
+- Ensure you have Go installed, version 1.21 or higher. You can download it from [Go's official website](https://golang.org/dl/).
+- Elasticsearch cluster up and running
+- Basic understanding of Elasticsearch concepts and CLI operations
 
-## get
+### Installation
+
+1. Install `esctl` using Go: `go get github.com/paraizofelipe/esctl`
+2. This command will automatically download and install `esctl` in your Go bin directory.
+3. Ensure your Go bin directory is in your system's PATH to run `esctl` from any location.
+
+## Commands
+
+### get
 
 ```bash
  $ esctl -n local get indices
@@ -22,7 +36,7 @@ TODO
  $ esctl -n local get snapshots
  $ esctl -n local get config
 ```
-## change
+### change
 
 ```bash
  $ esctl -n local change alias --body '{}'
@@ -31,7 +45,7 @@ TODO
  $ esctl -n local change config 'CLUSTER_NAME'
 ```
 
-## describe
+### describe
 
 ```bash
 $ esctl -n 'local' describe index 
@@ -45,14 +59,14 @@ $ esctl -n 'local' describe count 'INDEX_NAME'
 $ esctl -n 'local' describe security user -n 'USERNAME'
 ```
 
-## create
+### create
 
 ```bash
 $ esctl -n 'local' create index --body '{}' 'INDEX_NAME' 
 $ esctl -n 'local' create index doc --id '1q2w3e4r' --body '{}' 'INDEX_NAME'
 ```
 
-## delete
+### delete
 
 ```bash
 $ esctl -n 'local' delete index 'INDEX_NAME'
@@ -60,7 +74,7 @@ $ esctl -n 'local' delete index alias  --name 'ALIAS_NAME' 'INDEX_PATTERN'
 $ esctl -n 'local' delete security user 'USERNAME'
 ```
 
-## task
+### task
 
 ```bash
 $ esctl -n 'local' task list 
@@ -68,13 +82,13 @@ $ esctl -n 'local' task
 $ esctl -n 'local' task cancel
 ```
 
-## search
+### search
 
 ```bash
 $ esctl -n 'local' search --query '{}'
 ```
 
-## apply
+### apply
 
 Apply cluster reroute:
 
