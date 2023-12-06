@@ -9,12 +9,12 @@ import (
 func DescribeCountCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "count",
-		Usage: "Count documents matching a query",
+		Usage: "Determine the number of documents in Elasticsearch matching a specified query",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "query",
 				Aliases:  []string{"q"},
-				Usage:    "Query to be executed",
+				Usage:    "Provide the Elasticsearch query in JSON format to filter the documents for counting",
 				Required: false,
 			},
 		},

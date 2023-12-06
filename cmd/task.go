@@ -9,12 +9,12 @@ import (
 func DescribeTaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "task",
-		Usage: "Get task by id",
+		Usage: "Retrieve detailed information about a specific task using its ID",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "id",
 				Aliases:  []string{"i"},
-				Usage:    "Task id",
+				Usage:    "Specify the unique identifier of the task to describe",
 				Required: false,
 			},
 		},
@@ -32,12 +32,12 @@ func DescribeTaskCommand() *cli.Command {
 func CancelTaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "cancel",
-		Usage: "Cancel task by id",
+		Usage: "Cancel a specified task using its ID",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "id",
 				Aliases:  []string{"i"},
-				Usage:    "Task id",
+				Usage:    "Provide the unique identifier of the task to be cancelled",
 				Required: false,
 			},
 		},
@@ -55,12 +55,12 @@ func CancelTaskCommand() *cli.Command {
 func GetTaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "list",
-		Usage: "List tasks",
+		Usage: "List all tasks or filter tasks by node IDs",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "nodes",
 				Aliases:  []string{"n"},
-				Usage:    "Node id",
+				Usage:    "Filter tasks by specific node IDs, separated by commas",
 				Required: false,
 			},
 		},
@@ -78,7 +78,7 @@ func GetTaskCommand() *cli.Command {
 func TaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "task",
-		Usage: "Manage tasks",
+		Usage: "Commands to manage and interact with Elasticsearch tasks",
 		Subcommands: []*cli.Command{
 			DescribeTaskCommand(),
 			CancelTaskCommand(),

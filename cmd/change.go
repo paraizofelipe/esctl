@@ -7,7 +7,7 @@ import (
 func ChangeCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "change",
-		Usage: "Change resources in Elasticsearch",
+		Usage: "Modify various Elasticsearch resources, including index aliases, mappings, security settings, and CLI configurations",
 		Subcommands: []*cli.Command{
 			ChangeIndexAliasCommand(),
 			ChangeIndexMappingCommand(),

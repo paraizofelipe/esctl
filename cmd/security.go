@@ -17,7 +17,7 @@ type SecurityUser struct {
 func ChangeSecurityCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "security",
-		Usage: "Change security settings",
+		Usage: "Modify Elasticsearch security settings, such as user configurations",
 		Subcommands: []*cli.Command{
 			ChangeSecurityUserCommand(),
 		},
@@ -41,10 +41,11 @@ func ApplySecurityUsers(ctx *cli.Context, users []SecurityUser) error {
 func ChangeSecurityUserCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "user",
-		Usage: "Change user settings",
+		Usage: "Update settings for an Elasticsearch user",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "body",
+				Usage:   "JSON-formatted body defining the new user settings",
 				Aliases: []string{"b"},
 			},
 		},
@@ -66,10 +67,11 @@ func ChangeSecurityUserCommand() *cli.Command {
 func DescribeSecurityUserCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "user",
-		Usage: "Describe user settings",
+		Usage: "Retrieve and display the security settings of specified Elasticsearch users",
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
 				Name:    "name",
+				Usage:   "Specify the name(s) of the Elasticsearch user(s) to describe",
 				Aliases: []string{"n"},
 			},
 		},
@@ -88,10 +90,11 @@ func DescribeSecurityUserCommand() *cli.Command {
 func DeleteSecurityUserCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "user",
-		Usage: "Delete user settings",
+		Usage: "Delete a specified user from Elasticsearch security settings",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "name",
+				Usage:   "Specify the name of the Elasticsearch user to be deleted",
 				Aliases: []string{"n"},
 			},
 		},
@@ -110,7 +113,7 @@ func DeleteSecurityUserCommand() *cli.Command {
 func DeleteSecurityCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "security",
-		Usage: "Delete security settings",
+		Usage: "Remove security settings, including user configurations, in Elasticsearch",
 		Subcommands: []*cli.Command{
 			DeleteSecurityUserCommand(),
 		},
@@ -120,7 +123,7 @@ func DeleteSecurityCommand() *cli.Command {
 func DescribeSecurityCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "security",
-		Usage: "Describe security settings",
+		Usage: "View detailed security settings in Elasticsearch, including user configurations",
 		Subcommands: []*cli.Command{
 			DescribeSecurityUserCommand(),
 		},

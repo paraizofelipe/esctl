@@ -18,11 +18,12 @@ type ApplyFile struct {
 func ApplyCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "apply",
-		Usage: "",
+		Usage: "Apply a range of configurations or changes to Elasticsearch from a specified JSON file",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "file",
 				Aliases: []string{"f"},
+				Usage:   "Path to the JSON file containing the configurations to be applied",
 			},
 		},
 		Action: func(ctx *cli.Context) error {

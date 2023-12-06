@@ -7,7 +7,7 @@ import (
 func DeleteCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "delete",
-		Usage: "Delete resources in Elasticsearch",
+		Usage: "Remove various resources from Elasticsearch, including indices and security settings",
 		Subcommands: []*cli.Command{
 			DeleteIndexCommand(),
 			DeleteSecurityCommand(),

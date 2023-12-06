@@ -9,7 +9,6 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/paraizofelipe/esctl/internal/config"
-
 	"github.com/urfave/cli/v2"
 )
 
@@ -18,7 +17,7 @@ const APP_NAME = "esctl"
 func NewRootCommand() *cli.App {
 	app := cli.NewApp()
 	app.Name = APP_NAME
-	app.Usage = "Elasticsearch Tools CLI"
+	app.Usage = "A command-line interface for managing and interacting with Elasticsearch clusters"
 	app.Version = "1.0.0"
 
 	app.Suggest = true
@@ -34,22 +33,27 @@ func NewRootCommand() *cli.App {
 			Aliases:    []string{"f"},
 			Value:      fmt.Sprintf("%s/.config/esctl/config.toml", os.Getenv("HOME")),
 			HasBeenSet: true,
+			Usage:      "Specify the path to the configuration file for esctl",
 		},
 		&cli.StringFlag{
 			Name:    "cluster-name",
 			Aliases: []string{"n"},
+			Usage:   "Select a specific Elasticsearch cluster by name for executing commands",
 		},
 		&cli.StringFlag{
 			Name:    "address",
 			Aliases: []string{"a"},
+			Usage:   "Set the address of the Elasticsearch cluster to connect to",
 		},
 		&cli.StringFlag{
 			Name:    "username",
 			Aliases: []string{"u"},
+			Usage:   "Username for authentication with the Elasticsearch cluster",
 		},
 		&cli.StringFlag{
 			Name:    "password",
 			Aliases: []string{"p"},
+			Usage:   "Password for authentication with the Elasticsearch cluster",
 		},
 	}
 	app.Flags = flags

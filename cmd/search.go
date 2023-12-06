@@ -10,25 +10,24 @@ import (
 )
 
 func SearchCommand() *cli.Command {
-
 	appFlags := []cli.Flag{
 		&cli.StringFlag{
 			Name:     "query",
 			Aliases:  []string{"q"},
-			Usage:    "The search query string",
+			Usage:    "Enter the search query string to be executed against the index",
 			Required: true,
 		},
 		&cli.StringFlag{
 			Name:     "file",
 			Aliases:  []string{"f"},
-			Usage:    "The file with the search query",
+			Usage:    "Specify a file path containing the search query in JSON format",
 			Required: false,
 		},
 	}
 
 	return &cli.Command{
 		Name:  "search",
-		Usage: "Search documents in an index",
+		Usage: "Execute a search query against specified Elasticsearch indices",
 		Flags: appFlags,
 		Action: func(ctx *cli.Context) error {
 			es := ctx.Context.Value("esClient").(*client.Elastic)

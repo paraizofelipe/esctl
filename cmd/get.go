@@ -10,21 +10,22 @@ func GetCommand() *cli.Command {
 
 	return &cli.Command{
 		Name:  "get",
-		Usage: "Show information about Elasticsearch cluster in text mode",
+		Usage: "Retrieve detailed information about various Elasticsearch cluster resources",
 		Subcommands: []*cli.Command{
 			{
 				Name:  "indices",
-				Usage: "List all indices in Elasticsearch",
+				Usage: "List and provide detailed information about all indices in Elasticsearc",
 				Flags: []cli.Flag{
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -41,17 +42,18 @@ func GetCommand() *cli.Command {
 			},
 			{
 				Name:  "aliases",
-				Usage: "List all aliases in Elasticsearch",
+				Usage: "Display a list of all aliases configured in Elasticsearch",
 				Flags: []cli.Flag{
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -73,12 +75,13 @@ func GetCommand() *cli.Command {
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -105,12 +108,13 @@ func GetCommand() *cli.Command {
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -139,12 +143,13 @@ func GetCommand() *cli.Command {
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -164,15 +169,16 @@ func GetCommand() *cli.Command {
 				Name:  "pending-tasks",
 				Usage: "List pending tasks in Elasticsearch",
 				Flags: []cli.Flag{
+					&cli.StringSliceFlag{
+						Name:    "columns",
+						Aliases: []string{"c"},
+						Usage:   "Specify the columns to include in the output, separated by commas",
+					},
 					&cli.BoolFlag{
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
-					},
-					&cli.StringSliceFlag{
-						Name:    "columns",
-						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -195,11 +201,12 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -222,11 +229,12 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -249,11 +257,12 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 				},
 				Action: func(ctx *cli.Context) error {
@@ -276,11 +285,12 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 					&cli.StringSliceFlag{
 						Name:    "node",
@@ -309,11 +319,12 @@ func GetCommand() *cli.Command {
 						Name:    "describe",
 						Value:   false,
 						Aliases: []string{"d"},
+						Usage:   "Include detailed descriptions for each column in the output",
 					},
 					&cli.StringSliceFlag{
 						Name:    "columns",
 						Aliases: []string{"c"},
-						Usage:   "Comma-separated list of columns to display",
+						Usage:   "Specify the columns to include in the output, separated by commas",
 					},
 					&cli.StringSliceFlag{
 						Name:    "repository",

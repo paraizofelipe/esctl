@@ -8,7 +8,7 @@ func DescribeCommand() *cli.Command {
 	return &cli.Command{
 		Name:    "describe",
 		Aliases: []string{"desc"},
-		Usage:   "Describe information about a created resources",
+		Usage:   "Provide detailed descriptions and status of various Elasticsearch resource",
 		Subcommands: []*cli.Command{
 			DescribeIndexCommand(),
 			DescribeTaskCommand(),

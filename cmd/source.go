@@ -9,18 +9,18 @@ import (
 func NewDescribeSourceCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "source",
-		Usage: "Get document source by id",
+		Usage: "Retrieve the source of a document in Elasticsearch using its ID",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "id",
 				Aliases:  []string{"i"},
-				Usage:    "Document id",
+				Usage:    "Specify the unique identifier of the document whose source is to be retrieved",
 				Required: true,
 			},
 			&cli.StringSliceFlag{
 				Name:     "fields",
 				Aliases:  []string{"f"},
-				Usage:    "Comma-separated list of stored fields to return in the response",
+				Usage:    "List specific stored fields to include in the response, separated by commas",
 				Required: false,
 			},
 		},

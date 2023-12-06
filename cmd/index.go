@@ -21,18 +21,18 @@ type Mapping struct {
 func DescribeIndexDocCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "doc",
-		Usage: "Describe document by id",
+		Usage: "Retrieve and display detailed information about a document using its unique identifier",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "id",
 				Aliases:  []string{"i"},
-				Usage:    "Document id",
+				Usage:    "Specify the unique identifier of the document to be described",
 				Required: true,
 			},
 			&cli.StringSliceFlag{
 				Name:     "fields",
 				Aliases:  []string{"f"},
-				Usage:    "Comma-separated list of stored fields to return in the response",
+				Usage:    "List of specific stored fields to include in the response, separated by comma",
 				Required: false,
 			},
 		},
@@ -52,7 +52,7 @@ func DescribeIndexDocCommand() *cli.Command {
 func DescribeIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
-		Usage: "Get information about a created index alias",
+		Usage: "Display details about an existing index alias, including its patterns and configurations",
 		Action: func(ctx *cli.Context) error {
 			indexPatterns := ctx.Args().Slice()
 			es := ctx.Context.Value("esClient").(*client.Elastic)
@@ -78,10 +78,11 @@ func ApplyIndexAlias(ctx *cli.Context, actions AliasAction) error {
 func ChangeIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
-		Usage: "Change index alias",
+		Usage: "Modify the configuration or pattern of an existing index alias",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "body",
+				Usage:    "Provide the new configuration for the index alias in JSON format",
 				Aliases:  []string{"b"},
 				Required: true,
 			},
@@ -103,7 +104,7 @@ func ChangeIndexAliasCommand() *cli.Command {
 func DeleteIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
-		Usage: "Delete index alias",
+		Usage: "Remove an existing index alias and its associated configurations",
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
 				Name:     "name",
@@ -128,7 +129,7 @@ func DeleteIndexAliasCommand() *cli.Command {
 func DescribeIndexSettingsCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "settings",
-		Usage: "Get settings for a created index",
+		Usage: "Retrieve and display the current settings of a specified index",
 		Action: func(ctx *cli.Context) error {
 			indexPatterns := ctx.Args().Slice()
 			es := ctx.Context.Value("esClient").(*client.Elastic)
@@ -144,7 +145,7 @@ func DescribeIndexSettingsCommand() *cli.Command {
 func DescribeIndexMappingCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "mapping",
-		Usage: "Get mapping for a created index",
+		Usage: "Show the mapping details, including field types and index configurations, of a specific index",
 		Action: func(ctx *cli.Context) error {
 			indexPatterns := ctx.Args().Slice()
 			es := ctx.Context.Value("esClient").(*client.Elastic)
@@ -171,7 +172,7 @@ func ApplyIndexMapping(ctx *cli.Context, indexName []string, actions types.Prope
 func ChangeIndexMappingCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "mapping",
-		Usage: "Change index mapping",
+		Usage: "Update or modify the mapping of an existing index with new configurations",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "body",
@@ -196,7 +197,7 @@ func ChangeIndexMappingCommand() *cli.Command {
 func DescribeIndexStatsCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "stats",
-		Usage: "Get stats for a created index",
+		Usage: "Access and display statistical data and metrics for a specified index",
 		Action: func(ctx *cli.Context) error {
 			indexPatterns := ctx.Args().Slice()
 			es := ctx.Context.Value("esClient").(*client.Elastic)
@@ -212,7 +213,7 @@ func DescribeIndexStatsCommand() *cli.Command {
 func DescribeIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
-		Usage: "Get information about a created index",
+		Usage: "Fetch and display comprehensive information about an index, including its documents, aliases, and settings",
 		Action: func(ctx *cli.Context) error {
 			es := ctx.Context.Value("esClient").(*client.Elastic)
 			indexRequest := &esapi.IndicesGetRequest{
@@ -234,7 +235,7 @@ func DescribeIndexCommand() *cli.Command {
 func CreateIndexDocCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "doc",
-		Usage: "Add document to index",
+		Usage: "Insert a new document into a specified index, with optional custom ID",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "id",
@@ -262,7 +263,7 @@ func CreateIndexDocCommand() *cli.Command {
 func CreateIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
-		Usage: "Create index",
+		Usage: "Initialize a new index in Elasticsearch with customizable settings and mappings",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "body",
@@ -288,7 +289,7 @@ func CreateIndexCommand() *cli.Command {
 func DeleteIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
-		Usage: "Delete index",
+		Usage: "Permanently remove an existing index and all its associated data from Elasticsearch",
 		Action: func(ctx *cli.Context) error {
 			es := ctx.Context.Value("esClient").(*client.Elastic)
 			indexPatterns := ctx.Args().Slice()

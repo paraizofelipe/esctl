@@ -13,11 +13,12 @@ import (
 func ClusterRerouteCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "reroute",
-		Usage: "Reroute shards",
+		Usage: "Manually reroute shards in the cluster to optimize distribution or repair issues",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "body",
 				Aliases:  []string{"b"},
+				Usage:    "JSON body specifying the reroute actions to be taken",
 				Required: true,
 			},
 		},
@@ -49,7 +50,7 @@ func ApplyClusterReroute(ctx *cli.Context, commands types.Command) error {
 func ClusterCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "cluster",
-		Usage: "Cluster commands",
+		Usage: "Commands for managing and interacting with the Elasticsearch cluster",
 		Subcommands: []*cli.Command{
 			ClusterRerouteCommand(),
 		},

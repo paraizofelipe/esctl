@@ -12,7 +12,7 @@ import (
 func GetConfigCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "config",
-		Usage: "Show CLI configurations",
+		Usage: "Display the current configuration settings for the CLI, including cluster details",
 		Action: func(ctx *cli.Context) error {
 			filePath := ctx.String("config-file")
 			setup, err := config.ReadSetup(filePath)
@@ -37,7 +37,7 @@ func GetConfigCommand() *cli.Command {
 func ChangeConfigCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "config",
-		Usage: "Change the default cluster",
+		Usage: "Update the default cluster setting in the CLI configuration",
 		Action: func(ctx *cli.Context) error {
 			filePath := ctx.String("config-file")
 			setup, err := config.ReadSetup(filePath)
