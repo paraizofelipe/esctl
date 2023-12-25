@@ -19,7 +19,7 @@ func DescribeTaskCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			request := &esapi.TasksGetRequest{
 				Pretty: true,
 				TaskID: ctx.String("id"),
@@ -42,7 +42,7 @@ func CancelTaskCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			request := &esapi.TasksCancelRequest{
 				Pretty: true,
 				TaskID: ctx.String("id"),
@@ -65,7 +65,7 @@ func GetTaskCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			request := &esapi.TasksListRequest{
 				Pretty: true,
 				Nodes:  ctx.StringSlice("nodes"),

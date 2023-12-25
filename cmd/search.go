@@ -15,7 +15,13 @@ func SearchCommand() *cli.Command {
 			Name:     "query",
 			Aliases:  []string{"q"},
 			Usage:    "Enter the search query string to be executed against the index",
-			Required: true,
+			Required: false,
+		},
+		&cli.BoolFlag{
+			Name:     "editor",
+			Aliases:  []string{"e"},
+			Usage:    "",
+			Required: false,
 		},
 		&cli.StringFlag{
 			Name:     "file",
@@ -30,9 +36,18 @@ func SearchCommand() *cli.Command {
 		Usage: "Execute a search query against specified Elasticsearch indices",
 		Flags: appFlags,
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.Elastic)
-			filePath := ctx.String("file")
-			if filePath != "" {
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
+			textEditor := file.NewTextEditor()
+
+			if ctx.Bool("editor") {
+				content, err := textEditor.ExecEditor(ctx.String("file"))
+				if err != nil {
+					return err
+				}
+				ctx.Set("query", content)
+			}
+
+			if filePath := ctx.String("file"); filePath != "" && !ctx.Bool("editor") {
 				jsonQuery, err := file.ReadJSONFile(filePath)
 				if err != nil {
 					return err
@@ -40,6 +55,10 @@ func SearchCommand() *cli.Command {
 				if jsonQuery != "" {
 					ctx.Set("query", jsonQuery)
 				}
+			}
+
+			if ctx.String("query") == "" {
+				return cli.Exit("No query specified", 0)
 			}
 
 			request := &esapi.SearchRequest{

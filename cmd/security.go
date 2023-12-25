@@ -25,7 +25,7 @@ func ChangeSecurityCommand() *cli.Command {
 }
 
 func ApplySecurityUsers(ctx *cli.Context, users []SecurityUser) error {
-	es := ctx.Context.Value("esClient").(*client.Elastic)
+	es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 	for _, user := range users {
 		body := esutil.NewJSONReader(user)
 		request := &esapi.SecurityPutUserRequest{
@@ -52,7 +52,7 @@ func ChangeSecurityUserCommand() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			var body *strings.Reader
 
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			body = strings.NewReader(ctx.String("body"))
 			request := &esapi.SecurityPutUserRequest{
 				Username: ctx.Args().First(),
@@ -76,7 +76,7 @@ func DescribeSecurityUserCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			users := ctx.StringSlice("name")
 			request := &esapi.SecurityGetUserRequest{
 				Username: users,
@@ -99,7 +99,7 @@ func DeleteSecurityUserCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			user := ctx.String("name")
 			request := &esapi.SecurityDeleteUserRequest{
 				Username: user,

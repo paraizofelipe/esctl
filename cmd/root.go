@@ -94,6 +94,7 @@ func NewRootCommand() *cli.App {
 		ChangeCommand(),
 		DeleteCommand(),
 		TaskCommand(),
+		RunCommand(),
 	}
 
 	return app

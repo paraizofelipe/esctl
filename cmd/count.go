@@ -20,7 +20,7 @@ func DescribeCountCommand() *cli.Command {
 		},
 		Action: func(ctx *cli.Context) error {
 			indexPatterns := ctx.Args().Slice()
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			request := &esapi.CountRequest{
 				Pretty: true,
 				Index:  indexPatterns,

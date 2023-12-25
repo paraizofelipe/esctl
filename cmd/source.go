@@ -25,7 +25,7 @@ func NewDescribeSourceCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			docRequest := &esapi.GetSourceRequest{
 				Index:          ctx.Args().Get(0),
 				Pretty:         true,

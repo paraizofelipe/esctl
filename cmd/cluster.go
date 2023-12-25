@@ -23,7 +23,7 @@ func ClusterRerouteCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.Elastic)
+			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			body := strings.NewReader(ctx.String("body"))
 			request := &esapi.ClusterRerouteRequest{
 				Pretty: true,
@@ -37,7 +37,7 @@ func ClusterRerouteCommand() *cli.Command {
 }
 
 func ApplyClusterReroute(ctx *cli.Context, commands types.Command) error {
-	es := ctx.Context.Value("esClient").(*client.Elastic)
+	es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 	body := esutil.NewJSONReader(commands)
 	request := &esapi.ClusterRerouteRequest{
 		Pretty: true,
