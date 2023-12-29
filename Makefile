@@ -18,3 +18,11 @@ start: build
 
 dk-build:
 	docker build -t esctl:latest .
+
+mockgen:
+	@go get go.uber.org/mock/mockgen@latest
+	mockgen -source ./internal/file/editor.go -destination ./internal/file/editor_mock.go -package file
+	mockgen -source ./internal/client/elastic.go -destination ./internal/client/elastic_mock.go -package client
+
+test:
+	go test ./... -covermode=count -count 1
