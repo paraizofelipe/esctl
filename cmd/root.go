@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -9,12 +8,21 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/paraizofelipe/esctl/internal/config"
+	"github.com/paraizofelipe/esctl/internal/file"
 	"github.com/urfave/cli/v2"
 )
 
 const APP_NAME = "esctl"
 
 func NewRootCommand() *cli.App {
+	var cluster config.Cluster
+	var esConfig elasticsearch.Config
+
+	es, err := client.NewElastic(elasticsearch.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	app := cli.NewApp()
 	app.Name = APP_NAME
 	app.Usage = "A command-line interface for managing and interacting with Elasticsearch clusters"
@@ -27,7 +35,7 @@ func NewRootCommand() *cli.App {
 		fmt.Printf("Ops, command %s unknown\n", in)
 	}
 
-	flags := []cli.Flag{
+	app.Flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:       "config-file",
 			Aliases:    []string{"f"},
@@ -56,16 +64,12 @@ func NewRootCommand() *cli.App {
 			Usage:   "Password for authentication with the Elasticsearch cluster",
 		},
 	}
-	app.Flags = flags
 	app.Before = func(ctx *cli.Context) error {
 		filePath := ctx.String("config-file")
 		setup, err := config.ReadSetup(filePath)
 		if err != nil {
 			log.Fatalf("Error while loading configuration file: %s", err)
 		}
-
-		var cluster config.Cluster
-		var config elasticsearch.Config
 
 		clusterName := ctx.String("cluster-name")
 		if clusterName != "" {
@@ -74,27 +78,27 @@ func NewRootCommand() *cli.App {
 			cluster = setup.DefaultCluster()
 		}
 
-		config = elasticsearch.Config{
+		esConfig = elasticsearch.Config{
 			Addresses: cluster.Address,
 			Username:  cluster.Username,
 			Password:  cluster.Password,
 		}
-		es := client.NewElastic(config)
-		ctx.Context = context.WithValue(ctx.Context, "esClient", es)
-
+		es, err = client.NewElastic(esConfig)
+		if err != nil {
+			log.Fatal(err)
+		}
 		return nil
 	}
 
 	app.Commands = []*cli.Command{
-		ApplyCommand(),
-		SearchCommand(),
-		GetCommand(),
-		DescribeCommand(),
-		CreateCommand(),
-		ChangeCommand(),
-		DeleteCommand(),
-		TaskCommand(),
-		RunCommand(),
+		ApplyCommand(es),
+		SearchCommand(es, file.NewTextEditor()),
+		GetCommand(es),
+		DescribeCommand(es),
+		CreateCommand(es),
+		ChangeCommand(es),
+		DeleteCommand(es),
+		TaskCommand(es),
 	}
 
 	return app

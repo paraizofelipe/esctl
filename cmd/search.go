@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
@@ -9,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func SearchCommand() *cli.Command {
+func SearchCommand(es client.ElasticClient, textEditor file.Editor) *cli.Command {
 	appFlags := []cli.Flag{
 		&cli.StringFlag{
 			Name:     "query",
@@ -36,9 +37,6 @@ func SearchCommand() *cli.Command {
 		Usage: "Execute a search query against specified Elasticsearch indices",
 		Flags: appFlags,
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
-			textEditor := file.NewTextEditor()
-
 			if ctx.Bool("editor") {
 				content, err := textEditor.ExecEditor(ctx.String("file"))
 				if err != nil {
@@ -58,7 +56,7 @@ func SearchCommand() *cli.Command {
 			}
 
 			if ctx.String("query") == "" {
-				return cli.Exit("No query specified", 0)
+				return errors.New("No query specified")
 			}
 
 			request := &esapi.SearchRequest{

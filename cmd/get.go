@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func GetCommand() *cli.Command {
+func GetCommand(es client.ElasticClient) *cli.Command {
 
 	return &cli.Command{
 		Name:  "get",
@@ -29,7 +29,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatIndicesRequest{
 						V:      esapi.BoolPtr(true),
@@ -57,7 +56,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatAliasesRequest{
 						V:      esapi.BoolPtr(true),
@@ -85,7 +83,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatNodesRequest{
 						V:      esapi.BoolPtr(true),
@@ -118,7 +115,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 
 					request := &esapi.CatShardsRequest{
@@ -154,7 +150,6 @@ func GetCommand() *cli.Command {
 				},
 				Action: func(ctx *cli.Context) error {
 					threadPoolPatterns := ctx.StringSlice("thread-pool-pattern")
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatThreadPoolRequest{
 						Pretty:             true,
@@ -182,7 +177,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatPendingTasksRequest{
 						V:      esapi.BoolPtr(true),
@@ -210,7 +204,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatTasksRequest{
 						V:      esapi.BoolPtr(true),
@@ -238,7 +231,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatHealthRequest{
 						V:      esapi.BoolPtr(true),
@@ -266,7 +258,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatRepositoriesRequest{
 						V:      esapi.BoolPtr(true),
@@ -299,7 +290,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatAllocationRequest{
 						V:      esapi.BoolPtr(true),
@@ -333,7 +323,6 @@ func GetCommand() *cli.Command {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 					columns := ctx.StringSlice("columns")
 					request := &esapi.CatSnapshotsRequest{
 						V:          esapi.BoolPtr(true),

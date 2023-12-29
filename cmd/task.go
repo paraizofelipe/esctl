@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func DescribeTaskCommand() *cli.Command {
+func DescribeTaskCommand(es client.ElasticClient) *cli.Command {
 	return &cli.Command{
 		Name:  "task",
 		Usage: "Retrieve detailed information about a specific task using its ID",
@@ -19,7 +19,6 @@ func DescribeTaskCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			request := &esapi.TasksGetRequest{
 				Pretty: true,
 				TaskID: ctx.String("id"),
@@ -29,7 +28,7 @@ func DescribeTaskCommand() *cli.Command {
 	}
 }
 
-func CancelTaskCommand() *cli.Command {
+func CancelTaskCommand(es client.ElasticClient) *cli.Command {
 	return &cli.Command{
 		Name:  "cancel",
 		Usage: "Cancel a specified task using its ID",
@@ -42,7 +41,6 @@ func CancelTaskCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			request := &esapi.TasksCancelRequest{
 				Pretty: true,
 				TaskID: ctx.String("id"),
@@ -52,7 +50,7 @@ func CancelTaskCommand() *cli.Command {
 	}
 }
 
-func GetTaskCommand() *cli.Command {
+func GetTaskCommand(es client.ElasticClient) *cli.Command {
 	return &cli.Command{
 		Name:  "list",
 		Usage: "List all tasks or filter tasks by node IDs",
@@ -65,7 +63,6 @@ func GetTaskCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			request := &esapi.TasksListRequest{
 				Pretty: true,
 				Nodes:  ctx.StringSlice("nodes"),
@@ -75,14 +72,14 @@ func GetTaskCommand() *cli.Command {
 	}
 }
 
-func TaskCommand() *cli.Command {
+func TaskCommand(es client.ElasticClient) *cli.Command {
 	return &cli.Command{
 		Name:  "task",
 		Usage: "Commands to manage and interact with Elasticsearch tasks",
 		Subcommands: []*cli.Command{
-			DescribeTaskCommand(),
-			CancelTaskCommand(),
-			GetTaskCommand(),
+			DescribeTaskCommand(es),
+			CancelTaskCommand(es),
+			GetTaskCommand(es),
 		},
 	}
 }

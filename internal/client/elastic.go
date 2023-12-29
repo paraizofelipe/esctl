@@ -2,45 +2,41 @@ package client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/paraizofelipe/esctl/internal/config"
 )
 
-type Elastic struct {
+type ClusterElasticClient struct {
 	client *elasticsearch.Client
 }
 
-func CreateClient(cluster config.Cluster) (esClient *elasticsearch.Client, err error) {
-	cfg := elasticsearch.Config{
-		Addresses: cluster.Address,
-		Username:  cluster.Username,
-		Password:  cluster.Password,
-	}
-
-	if esClient, err = elasticsearch.NewClient(cfg); err != nil {
-		log.Fatalf("Erro to access elasticsearch: %s", err)
-	}
-
-	return
+type ElasticClient interface {
+	ExecRequest(ctx context.Context, request esapi.Request) (err error)
 }
 
-func NewElastic(config elasticsearch.Config) *Elastic {
+func NewElastic(config elasticsearch.Config) (ElasticClient, error) {
+	if config.Addresses == nil {
+		config = elasticsearch.Config{
+			Addresses: []string{"http://127.0.0.1:9200"},
+		}
+	}
+
 	client, err := elasticsearch.NewClient(config)
 	if err != nil {
-		log.Fatalf("Erro to access elasticsearch: %s", err)
+		return nil, errors.New(fmt.Sprintf("Error to access elasticsearch: %s", err))
 	}
 
-	return &Elastic{
+	return &ClusterElasticClient{
 		client: client,
-	}
+	}, nil
 }
 
-func (es *Elastic) ExecRequest(ctx context.Context, request esapi.Request) (err error) {
+func (es *ClusterElasticClient) ExecRequest(ctx context.Context, request esapi.Request) (err error) {
 	var res *esapi.Response
 
 	if res, err = request.Do(ctx, es.client); err != nil {

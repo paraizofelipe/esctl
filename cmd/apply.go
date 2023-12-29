@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/paraizofelipe/esctl/internal/file"
 	"github.com/urfave/cli/v2"
 )
@@ -15,7 +16,7 @@ type ApplyFile struct {
 	Body  json.RawMessage `json:"body"`
 }
 
-func ApplyCommand() *cli.Command {
+func ApplyCommand(es client.ElasticClient) *cli.Command {
 	return &cli.Command{
 		Name:  "apply",
 		Usage: "Apply a range of configurations or changes to Elasticsearch from a specified JSON file",
@@ -45,7 +46,7 @@ func ApplyCommand() *cli.Command {
 				if err := json.Unmarshal(applyFile.Body, &securityUser); err != nil {
 					return err
 				}
-				err = ApplySecurityUsers(ctx, securityUser)
+				err = ApplySecurityUsers(ctx, es, securityUser)
 				if err != nil {
 					return err
 				}
@@ -59,11 +60,11 @@ func ApplyCommand() *cli.Command {
 					return err
 				}
 			case "IndexAlias":
-				var bodyActions AliasAction
-				if err := json.Unmarshal(applyFile.Body, &bodyActions); err != nil {
+				var body AliasBody
+				if err := json.Unmarshal(applyFile.Body, &body); err != nil {
 					return err
 				}
-				err = ApplyIndexAlias(ctx, bodyActions)
+				err = ApplyIndexAlias(ctx, es, body)
 				if err != nil {
 					return err
 				}
@@ -78,7 +79,7 @@ func ApplyCommand() *cli.Command {
 				if err := json.Unmarshal(applyFile.Body, &bodyProperties); err != nil {
 					return err
 				}
-				err = ApplyIndexMapping(ctx, index, bodyProperties)
+				err = ApplyIndexMapping(ctx, es, index, bodyProperties)
 				if err != nil {
 					return err
 				}
