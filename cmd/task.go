@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func DescribeTaskCommand(es client.ElasticClient) *cli.Command {
+func DescribeTaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "task",
 		Usage: "Retrieve detailed information about a specific task using its ID",
@@ -19,6 +19,7 @@ func DescribeTaskCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			request := &esapi.TasksGetRequest{
 				Pretty: true,
 				TaskID: ctx.String("id"),
@@ -28,7 +29,7 @@ func DescribeTaskCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func CancelTaskCommand(es client.ElasticClient) *cli.Command {
+func CancelTaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "cancel",
 		Usage: "Cancel a specified task using its ID",
@@ -41,6 +42,7 @@ func CancelTaskCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			request := &esapi.TasksCancelRequest{
 				Pretty: true,
 				TaskID: ctx.String("id"),
@@ -50,7 +52,7 @@ func CancelTaskCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func GetTaskCommand(es client.ElasticClient) *cli.Command {
+func GetTaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "list",
 		Usage: "List all tasks or filter tasks by node IDs",
@@ -63,6 +65,7 @@ func GetTaskCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			request := &esapi.TasksListRequest{
 				Pretty: true,
 				Nodes:  ctx.StringSlice("nodes"),
@@ -72,14 +75,14 @@ func GetTaskCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func TaskCommand(es client.ElasticClient) *cli.Command {
+func TaskCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "task",
 		Usage: "Commands to manage and interact with Elasticsearch tasks",
 		Subcommands: []*cli.Command{
-			DescribeTaskCommand(es),
-			CancelTaskCommand(es),
-			GetTaskCommand(es),
+			DescribeTaskCommand(),
+			CancelTaskCommand(),
+			GetTaskCommand(),
 		},
 	}
 }

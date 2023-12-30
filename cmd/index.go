@@ -18,7 +18,7 @@ type Mapping struct {
 	M types.Property `json:"mappings"`
 }
 
-func DescribeIndexDocCommand(es client.ElasticClient) *cli.Command {
+func DescribeIndexDocCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "doc",
 		Usage: "Retrieve and display detailed information about a document using its unique identifier",
@@ -37,6 +37,7 @@ func DescribeIndexDocCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			docRequest := &esapi.GetRequest{
 				Pretty:         true,
 				DocumentID:     ctx.String("id"),
@@ -48,11 +49,12 @@ func DescribeIndexDocCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DescribeIndexAliasCommand(es client.ElasticClient) *cli.Command {
+func DescribeIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
 		Usage: "Display details about an existing index alias, including its patterns and configurations",
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexPatterns := ctx.Args().Slice()
 			request := &esapi.IndicesGetAliasRequest{
 				Pretty: true,
@@ -63,7 +65,8 @@ func DescribeIndexAliasCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func ApplyIndexAlias(ctx *cli.Context, es client.ElasticClient, bodies AliasBody) error {
+func ApplyIndexAlias(ctx *cli.Context, bodies AliasBody) error {
+	es := ctx.Context.Value("esClient").(client.ElasticClient)
 	body := esutil.NewJSONReader(bodies)
 	request := &esapi.IndicesUpdateAliasesRequest{
 		Pretty: true,
@@ -72,7 +75,7 @@ func ApplyIndexAlias(ctx *cli.Context, es client.ElasticClient, bodies AliasBody
 	return es.ExecRequest(ctx.Context, request)
 }
 
-func ChangeIndexAliasCommand(es client.ElasticClient) *cli.Command {
+func ChangeIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
 		Usage: "Modify the configuration or pattern of an existing index alias",
@@ -85,6 +88,7 @@ func ChangeIndexAliasCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexPatterns := ctx.Args().Slice()
 			body := strings.NewReader(ctx.String("body"))
 			request := &esapi.IndicesPutAliasRequest{
@@ -97,7 +101,7 @@ func ChangeIndexAliasCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DeleteIndexAliasCommand(es client.ElasticClient) *cli.Command {
+func DeleteIndexAliasCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "alias",
 		Usage: "Remove an existing index alias and its associated configurations",
@@ -109,6 +113,7 @@ func DeleteIndexAliasCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexPatterns := ctx.Args().Slice()
 			names := ctx.StringSlice("name")
 			request := &esapi.IndicesDeleteAliasRequest{
@@ -121,11 +126,12 @@ func DeleteIndexAliasCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DescribeIndexSettingsCommand(es client.ElasticClient) *cli.Command {
+func DescribeIndexSettingsCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "settings",
 		Usage: "Retrieve and display the current settings of a specified index",
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexPatterns := ctx.Args().Slice()
 			request := &esapi.IndicesGetSettingsRequest{
 				Pretty: true,
@@ -136,11 +142,12 @@ func DescribeIndexSettingsCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DescribeIndexMappingCommand(es client.ElasticClient) *cli.Command {
+func DescribeIndexMappingCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "mapping",
 		Usage: "Show the mapping details, including field types and index configurations, of a specific index",
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexPatterns := ctx.Args().Slice()
 			request := &esapi.IndicesGetMappingRequest{
 				Pretty: true,
@@ -151,7 +158,8 @@ func DescribeIndexMappingCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func ApplyIndexMapping(ctx *cli.Context, es client.ElasticClient, indexName []string, bodies types.Property) error {
+func ApplyIndexMapping(ctx *cli.Context, indexName []string, bodies types.Property) error {
+	es := ctx.Context.Value("esClient").(client.ElasticClient)
 	body := esutil.NewJSONReader(bodies)
 	request := &esapi.IndicesPutMappingRequest{
 		Index:  indexName,
@@ -161,7 +169,7 @@ func ApplyIndexMapping(ctx *cli.Context, es client.ElasticClient, indexName []st
 	return es.ExecRequest(ctx.Context, request)
 }
 
-func ChangeIndexMappingCommand(es client.ElasticClient) *cli.Command {
+func ChangeIndexMappingCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "mapping",
 		Usage: "Update or modify the mapping of an existing index with new configurations",
@@ -173,6 +181,7 @@ func ChangeIndexMappingCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexPatterns := ctx.Args().Slice()
 			body := strings.NewReader(ctx.String("body"))
 			request := &esapi.IndicesPutMappingRequest{
@@ -185,11 +194,12 @@ func ChangeIndexMappingCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DescribeIndexStatsCommand(es client.ElasticClient) *cli.Command {
+func DescribeIndexStatsCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "stats",
 		Usage: "Access and display statistical data and metrics for a specified index",
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexPatterns := ctx.Args().Slice()
 			request := &esapi.IndicesStatsRequest{
 				Pretty: true,
@@ -200,11 +210,12 @@ func DescribeIndexStatsCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DescribeIndexCommand(es client.ElasticClient) *cli.Command {
+func DescribeIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
 		Usage: "Fetch and display comprehensive information about an index, including its documents, aliases, and settings",
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexRequest := &esapi.IndicesGetRequest{
 				Pretty: true,
 				Index:  []string{ctx.Args().Get(0)},
@@ -212,16 +223,16 @@ func DescribeIndexCommand(es client.ElasticClient) *cli.Command {
 			return es.ExecRequest(ctx.Context, indexRequest)
 		},
 		Subcommands: []*cli.Command{
-			DescribeIndexDocCommand(es),
-			DescribeIndexAliasCommand(es),
-			DescribeIndexStatsCommand(es),
-			DescribeIndexMappingCommand(es),
-			DescribeIndexSettingsCommand(es),
+			DescribeIndexDocCommand(),
+			DescribeIndexAliasCommand(),
+			DescribeIndexStatsCommand(),
+			DescribeIndexMappingCommand(),
+			DescribeIndexSettingsCommand(),
 		},
 	}
 }
 
-func CreateIndexDocCommand(es client.ElasticClient) *cli.Command {
+func CreateIndexDocCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "doc",
 		Usage: "Insert a new document into a specified index, with optional custom ID",
@@ -236,6 +247,7 @@ func CreateIndexDocCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			body := strings.NewReader(ctx.String("body"))
 			request := &esapi.IndexRequest{
 				Pretty:     true,
@@ -248,7 +260,7 @@ func CreateIndexDocCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func CreateIndexCommand(es client.ElasticClient) *cli.Command {
+func CreateIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
 		Usage: "Initialize a new index in Elasticsearch with customizable settings and mappings",
@@ -259,6 +271,7 @@ func CreateIndexCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			body := strings.NewReader(ctx.String("body"))
 			request := &esapi.IndicesCreateRequest{
 				Pretty: true,
@@ -268,16 +281,17 @@ func CreateIndexCommand(es client.ElasticClient) *cli.Command {
 			return es.ExecRequest(ctx.Context, request)
 		},
 		Subcommands: []*cli.Command{
-			CreateIndexDocCommand(es),
+			CreateIndexDocCommand(),
 		},
 	}
 }
 
-func DeleteIndexCommand(es client.ElasticClient) *cli.Command {
+func DeleteIndexCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "index",
 		Usage: "Permanently remove an existing index and all its associated data from Elasticsearch",
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			indexPatterns := ctx.Args().Slice()
 			request := &esapi.IndicesDeleteRequest{
 				Pretty: true,
@@ -286,7 +300,7 @@ func DeleteIndexCommand(es client.ElasticClient) *cli.Command {
 			return es.ExecRequest(ctx.Context, request)
 		},
 		Subcommands: []*cli.Command{
-			DeleteIndexAliasCommand(es),
+			DeleteIndexAliasCommand(),
 		},
 	}
 }

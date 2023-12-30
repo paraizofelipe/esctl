@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -15,14 +16,6 @@ import (
 const APP_NAME = "esctl"
 
 func NewRootCommand() *cli.App {
-	var cluster config.Cluster
-	var esConfig elasticsearch.Config
-
-	es, err := client.NewElastic(elasticsearch.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	app := cli.NewApp()
 	app.Name = APP_NAME
 	app.Usage = "A command-line interface for managing and interacting with Elasticsearch clusters"
@@ -35,7 +28,7 @@ func NewRootCommand() *cli.App {
 		fmt.Printf("Ops, command %s unknown\n", in)
 	}
 
-	app.Flags = []cli.Flag{
+	flags := []cli.Flag{
 		&cli.StringFlag{
 			Name:       "config-file",
 			Aliases:    []string{"f"},
@@ -64,12 +57,16 @@ func NewRootCommand() *cli.App {
 			Usage:   "Password for authentication with the Elasticsearch cluster",
 		},
 	}
+	app.Flags = flags
 	app.Before = func(ctx *cli.Context) error {
 		filePath := ctx.String("config-file")
 		setup, err := config.ReadSetup(filePath)
 		if err != nil {
 			log.Fatalf("Error while loading configuration file: %s", err)
 		}
+
+		var cluster config.Cluster
+		var config elasticsearch.Config
 
 		clusterName := ctx.String("cluster-name")
 		if clusterName != "" {
@@ -78,27 +75,29 @@ func NewRootCommand() *cli.App {
 			cluster = setup.DefaultCluster()
 		}
 
-		esConfig = elasticsearch.Config{
+		config = elasticsearch.Config{
 			Addresses: cluster.Address,
 			Username:  cluster.Username,
 			Password:  cluster.Password,
 		}
-		es, err = client.NewElastic(esConfig)
+		es, err := client.NewElastic(config)
 		if err != nil {
 			log.Fatal(err)
 		}
+		ctx.Context = context.WithValue(ctx.Context, "esClient", es)
+
 		return nil
 	}
 
 	app.Commands = []*cli.Command{
-		ApplyCommand(es),
-		SearchCommand(es, file.NewTextEditor()),
-		GetCommand(es),
-		DescribeCommand(es),
-		CreateCommand(es),
-		ChangeCommand(es),
-		DeleteCommand(es),
-		TaskCommand(es),
+		ApplyCommand(),
+		SearchCommand(file.NewTextEditor()),
+		GetCommand(),
+		DescribeCommand(),
+		CreateCommand(),
+		ChangeCommand(),
+		DeleteCommand(),
+		TaskCommand(),
 	}
 
 	return app

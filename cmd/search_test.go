@@ -45,11 +45,11 @@ func TestSearchCommandWithQueryFlag(t *testing.T) {
 	mockElastic := client.NewMockElasticClient(ctrl)
 	mockElastic.EXPECT().ExecRequest(gomock.Any(), gomock.Any()).Return(nil)
 
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), "esClient", mockElastic)
 
 	app := &cli.App{
 		Commands: []*cli.Command{
-			SearchCommand(mockElastic, file.NewMockEditor(ctrl)),
+			SearchCommand(file.NewMockEditor(ctrl)),
 		},
 	}
 
@@ -69,11 +69,11 @@ func TestSearchCommandWithEditorFlag(t *testing.T) {
 	mockEditor := file.NewMockEditor(ctrl)
 	mockEditor.EXPECT().ExecEditor(gomock.Any()).Return(`{ "query": { "match_all": {} } }`, nil)
 
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), "esClient", mockElastic)
 
 	app := &cli.App{
 		Commands: []*cli.Command{
-			SearchCommand(mockElastic, mockEditor),
+			SearchCommand(mockEditor),
 		},
 	}
 
@@ -97,11 +97,11 @@ func TestSearchCommandWithFileFlag(t *testing.T) {
 	mockElastic.EXPECT().ExecRequest(gomock.Any(), gomock.Any()).Return(nil)
 	mockEditor := file.NewMockEditor(ctrl)
 
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), "esClient", mockElastic)
 
 	app := &cli.App{
 		Commands: []*cli.Command{
-			SearchCommand(mockElastic, mockEditor),
+			SearchCommand(mockEditor),
 		},
 	}
 

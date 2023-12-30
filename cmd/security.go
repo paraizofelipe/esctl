@@ -14,17 +14,18 @@ type SecurityUser struct {
 	putuser.Request
 }
 
-func ChangeSecurityCommand(es client.ElasticClient) *cli.Command {
+func ChangeSecurityCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "security",
 		Usage: "Modify Elasticsearch security settings, such as user configurations",
 		Subcommands: []*cli.Command{
-			ChangeSecurityUserCommand(es),
+			ChangeSecurityUserCommand(),
 		},
 	}
 }
 
-func ApplySecurityUsers(ctx *cli.Context, es client.ElasticClient, users []SecurityUser) error {
+func ApplySecurityUsers(ctx *cli.Context, users []SecurityUser) error {
+	es := ctx.Context.Value("esClient").(client.ElasticClient)
 	for _, user := range users {
 		body := esutil.NewJSONReader(user)
 		request := &esapi.SecurityPutUserRequest{
@@ -37,7 +38,7 @@ func ApplySecurityUsers(ctx *cli.Context, es client.ElasticClient, users []Secur
 	return nil
 }
 
-func ChangeSecurityUserCommand(es client.ElasticClient) *cli.Command {
+func ChangeSecurityUserCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "user",
 		Usage: "Update settings for an Elasticsearch user",
@@ -51,6 +52,7 @@ func ChangeSecurityUserCommand(es client.ElasticClient) *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			var body *strings.Reader
 
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			body = strings.NewReader(ctx.String("body"))
 			request := &esapi.SecurityPutUserRequest{
 				Username: ctx.Args().First(),
@@ -62,7 +64,7 @@ func ChangeSecurityUserCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DescribeSecurityUserCommand(es client.ElasticClient) *cli.Command {
+func DescribeSecurityUserCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "user",
 		Usage: "Retrieve and display the security settings of specified Elasticsearch users",
@@ -74,6 +76,7 @@ func DescribeSecurityUserCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			users := ctx.StringSlice("name")
 			request := &esapi.SecurityGetUserRequest{
 				Username: users,
@@ -84,7 +87,7 @@ func DescribeSecurityUserCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DeleteSecurityUserCommand(es client.ElasticClient) *cli.Command {
+func DeleteSecurityUserCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "user",
 		Usage: "Delete a specified user from Elasticsearch security settings",
@@ -96,6 +99,7 @@ func DeleteSecurityUserCommand(es client.ElasticClient) *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			user := ctx.String("name")
 			request := &esapi.SecurityDeleteUserRequest{
 				Username: user,
@@ -106,22 +110,22 @@ func DeleteSecurityUserCommand(es client.ElasticClient) *cli.Command {
 	}
 }
 
-func DeleteSecurityCommand(es client.ElasticClient) *cli.Command {
+func DeleteSecurityCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "security",
 		Usage: "Remove security settings, including user configurations, in Elasticsearch",
 		Subcommands: []*cli.Command{
-			DeleteSecurityUserCommand(es),
+			DeleteSecurityUserCommand(),
 		},
 	}
 }
 
-func DescribeSecurityCommand(es client.ElasticClient) *cli.Command {
+func DescribeSecurityCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "security",
 		Usage: "View detailed security settings in Elasticsearch, including user configurations",
 		Subcommands: []*cli.Command{
-			DescribeSecurityUserCommand(es),
+			DescribeSecurityUserCommand(),
 		},
 	}
 }

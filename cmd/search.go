@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func SearchCommand(es client.ElasticClient, textEditor file.Editor) *cli.Command {
+func SearchCommand(textEditor file.Editor) *cli.Command {
 	appFlags := []cli.Flag{
 		&cli.StringFlag{
 			Name:     "query",
@@ -37,6 +37,7 @@ func SearchCommand(es client.ElasticClient, textEditor file.Editor) *cli.Command
 		Usage: "Execute a search query against specified Elasticsearch indices",
 		Flags: appFlags,
 		Action: func(ctx *cli.Context) error {
+			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			if ctx.Bool("editor") {
 				content, err := textEditor.ExecEditor(ctx.String("file"))
 				if err != nil {
