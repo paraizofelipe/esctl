@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/urfave/cli/v2"
@@ -32,7 +34,9 @@ func NewDescribeSourceCommand() *cli.Command {
 				DocumentID:     ctx.String("id"),
 				SourceIncludes: ctx.StringSlice("fields"),
 			}
-			return es.ExecRequest(ctx.Context, docRequest)
+			jsonBytes, err := es.ExecRequest(ctx.Context, docRequest)
+			fmt.Println(string(jsonBytes))
+			return err
 		},
 	}
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/paraizofelipe/esctl/internal/client"
+	"github.com/paraizofelipe/esctl/internal/out"
 	"github.com/urfave/cli/v2"
 )
 
@@ -21,10 +22,11 @@ func DescribeTaskCommand() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			request := &esapi.TasksGetRequest{
-				Pretty: true,
 				TaskID: ctx.String("id"),
 			}
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			out.PrintPrettyJSON(jsonBytes)
+			return err
 		},
 	}
 }
@@ -44,10 +46,11 @@ func CancelTaskCommand() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			request := &esapi.TasksCancelRequest{
-				Pretty: true,
 				TaskID: ctx.String("id"),
 			}
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			out.PrintPrettyJSON(jsonBytes)
+			return err
 		},
 	}
 }
@@ -67,10 +70,11 @@ func GetTaskCommand() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			request := &esapi.TasksListRequest{
-				Pretty: true,
-				Nodes:  ctx.StringSlice("nodes"),
+				Nodes: ctx.StringSlice("nodes"),
 			}
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			out.PrintPrettyJSON(jsonBytes)
+			return err
 		},
 	}
 }

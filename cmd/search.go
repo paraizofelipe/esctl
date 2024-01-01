@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
@@ -66,7 +67,9 @@ func SearchCommand(textEditor file.Editor) *cli.Command {
 				Body:   strings.NewReader(ctx.String("query")),
 			}
 
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			fmt.Println(string(jsonBytes))
+			return err
 		},
 	}
 }

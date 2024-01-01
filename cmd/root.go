@@ -98,6 +98,8 @@ func NewRootCommand() *cli.App {
 		ChangeCommand(),
 		DeleteCommand(),
 		TaskCommand(),
+		ReindexCommand(),
+		StagesCommand(),
 	}
 
 	return app

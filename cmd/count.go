@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/paraizofelipe/esctl/internal/client"
+	"github.com/paraizofelipe/esctl/internal/out"
 	"github.com/urfave/cli/v2"
 )
 
@@ -22,11 +23,12 @@ func DescribeCountCommand() *cli.Command {
 			indexPatterns := ctx.Args().Slice()
 			es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 			request := &esapi.CountRequest{
-				Pretty: true,
-				Index:  indexPatterns,
-				Query:  ctx.String("query"),
+				Index: indexPatterns,
+				Query: ctx.String("query"),
 			}
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			out.PrintPrettyJSON(jsonBytes)
+			return err
 		},
 	}
 }

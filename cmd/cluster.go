@@ -7,6 +7,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/paraizofelipe/esctl/internal/client"
+	"github.com/paraizofelipe/esctl/internal/out"
 	"github.com/urfave/cli/v2"
 )
 
@@ -26,12 +27,12 @@ func ClusterRerouteCommand() *cli.Command {
 			es := ctx.Context.Value("esClient").(client.ElasticClient)
 			body := strings.NewReader(ctx.String("body"))
 			request := &esapi.ClusterRerouteRequest{
-				Pretty: true,
 				Metric: nil,
 				Body:   body,
 			}
-
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			out.PrintPrettyJSON(jsonBytes)
+			return err
 		},
 	}
 }
@@ -40,11 +41,12 @@ func ApplyClusterReroute(ctx *cli.Context, commands types.Command) error {
 	es := ctx.Context.Value("esClient").(*client.ClusterElasticClient)
 	body := esutil.NewJSONReader(commands)
 	request := &esapi.ClusterRerouteRequest{
-		Pretty: true,
 		Metric: nil,
 		Body:   body,
 	}
-	return es.ExecRequest(ctx.Context, request)
+	jsonBytes, err := es.ExecRequest(ctx.Context, request)
+	out.PrintPrettyJSON(jsonBytes)
+	return err
 }
 
 func ClusterCommand() *cli.Command {

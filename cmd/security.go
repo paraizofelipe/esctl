@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
@@ -31,9 +32,10 @@ func ApplySecurityUsers(ctx *cli.Context, users []SecurityUser) error {
 		request := &esapi.SecurityPutUserRequest{
 			Username: *user.Username,
 			Body:     body,
-			Pretty:   true,
 		}
-		return es.ExecRequest(ctx.Context, request)
+		jsonBytes, err := es.ExecRequest(ctx.Context, request)
+		fmt.Println(string(jsonBytes))
+		return err
 	}
 	return nil
 }
@@ -57,9 +59,10 @@ func ChangeSecurityUserCommand() *cli.Command {
 			request := &esapi.SecurityPutUserRequest{
 				Username: ctx.Args().First(),
 				Body:     body,
-				Pretty:   true,
 			}
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			fmt.Println(string(jsonBytes))
+			return err
 		},
 	}
 }
@@ -80,9 +83,10 @@ func DescribeSecurityUserCommand() *cli.Command {
 			users := ctx.StringSlice("name")
 			request := &esapi.SecurityGetUserRequest{
 				Username: users,
-				Pretty:   true,
 			}
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			fmt.Println(string(jsonBytes))
+			return err
 		},
 	}
 }
@@ -103,9 +107,10 @@ func DeleteSecurityUserCommand() *cli.Command {
 			user := ctx.String("name")
 			request := &esapi.SecurityDeleteUserRequest{
 				Username: user,
-				Pretty:   true,
 			}
-			return es.ExecRequest(ctx.Context, request)
+			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			fmt.Println(string(jsonBytes))
+			return err
 		},
 	}
 }

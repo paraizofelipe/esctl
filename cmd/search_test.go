@@ -43,7 +43,7 @@ func TestSearchCommandWithQueryFlag(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockElastic := client.NewMockElasticClient(ctrl)
-	mockElastic.EXPECT().ExecRequest(gomock.Any(), gomock.Any()).Return(nil)
+	mockElastic.EXPECT().ExecRequest(gomock.Any(), gomock.Any()).Return(nil, nil)
 
 	ctx := context.WithValue(context.Background(), "esClient", mockElastic)
 
@@ -65,7 +65,7 @@ func TestSearchCommandWithEditorFlag(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockElastic := client.NewMockElasticClient(ctrl)
-	mockElastic.EXPECT().ExecRequest(gomock.Any(), gomock.Any()).Return(nil)
+	mockElastic.EXPECT().ExecRequest(gomock.Any(), gomock.Any()).Return(nil, nil)
 	mockEditor := file.NewMockEditor(ctrl)
 	mockEditor.EXPECT().ExecEditor(gomock.Any()).Return(`{ "query": { "match_all": {} } }`, nil)
 
@@ -94,7 +94,7 @@ func TestSearchCommandWithFileFlag(t *testing.T) {
 	helperWriteFile(t, filename, `{ "query": { "match_all": {} } }`)
 
 	mockElastic := client.NewMockElasticClient(ctrl)
-	mockElastic.EXPECT().ExecRequest(gomock.Any(), gomock.Any()).Return(nil)
+	mockElastic.EXPECT().ExecRequest(gomock.Any(), gomock.Any()).Return(nil, nil)
 	mockEditor := file.NewMockEditor(ctrl)
 
 	ctx := context.WithValue(context.Background(), "esClient", mockElastic)

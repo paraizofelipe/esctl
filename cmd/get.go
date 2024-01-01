@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/urfave/cli/v2"
@@ -37,7 +39,9 @@ func GetCommand() *cli.Command {
 						H:      columns,
 						Help:   esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -65,7 +69,9 @@ func GetCommand() *cli.Command {
 						H:      columns,
 						Help:   esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -93,7 +99,9 @@ func GetCommand() *cli.Command {
 						H:      columns,
 						Help:   esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -128,7 +136,9 @@ func GetCommand() *cli.Command {
 						H:      columns,
 						Help:   esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -162,7 +172,9 @@ func GetCommand() *cli.Command {
 						H:                  columns,
 						Help:               esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -190,7 +202,9 @@ func GetCommand() *cli.Command {
 						H:      columns,
 						Help:   esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -218,7 +232,9 @@ func GetCommand() *cli.Command {
 						H:      columns,
 						Help:   esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -246,7 +262,9 @@ func GetCommand() *cli.Command {
 						H:      columns,
 						Help:   esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -274,7 +292,9 @@ func GetCommand() *cli.Command {
 						H:      columns,
 						Help:   esapi.BoolPtr(ctx.Bool("describe")),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -308,7 +328,9 @@ func GetCommand() *cli.Command {
 						Pretty: true,
 						NodeID: ctx.StringSlice("node"),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			{
@@ -342,7 +364,9 @@ func GetCommand() *cli.Command {
 						Pretty:     true,
 						Repository: ctx.StringSlice("repository"),
 					}
-					return es.ExecRequest(ctx.Context, request)
+					textBytes, err := es.ExecRequest(ctx.Context, request)
+					fmt.Println(string(textBytes))
+					return err
 				},
 			},
 			GetConfigCommand(),
