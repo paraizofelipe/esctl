@@ -16,7 +16,7 @@ type ClusterElasticClient struct {
 }
 
 type ElasticClient interface {
-	ExecRequest(ctx context.Context, request esapi.Request) (err error)
+	ExecRequest(ctx context.Context, request esapi.Request) ([]byte, error)
 }
 
 func NewElastic(config elasticsearch.Config) (ElasticClient, error) {
@@ -36,25 +36,25 @@ func NewElastic(config elasticsearch.Config) (ElasticClient, error) {
 	}, nil
 }
 
-func (es *ClusterElasticClient) ExecRequest(ctx context.Context, request esapi.Request) (err error) {
+func (es *ClusterElasticClient) ExecRequest(ctx context.Context, request esapi.Request) (bodyBytes []byte, err error) {
 	var res *esapi.Response
 
 	if res, err = request.Do(ctx, es.client); err != nil {
-		return fmt.Errorf("Error to get document: %s", err)
+		err = fmt.Errorf("Error to get document: %s", err)
+		return
 	}
 
 	defer res.Body.Close()
 
 	if res.IsError() {
-		return fmt.Errorf("[REQ-ERROR]: %s", res.String())
+		err = fmt.Errorf("[REQ-ERROR]: %s", res.String())
+		return
 	}
 
-	b, err := io.ReadAll(res.Body)
+	bodyBytes, err = io.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(string(b))
-
-	return
+	return bodyBytes, err
 }
