@@ -8,7 +8,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/reindex"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/paraizofelipe/esctl/internal/client"
-	"github.com/paraizofelipe/esctl/internal/out"
+	"github.com/paraizofelipe/esctl/internal/output"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v3"
 )
@@ -51,7 +51,7 @@ func (s *StageAlias) Process(ctx *cli.Context, es client.ElasticClient) error {
 	if err != nil {
 		return err
 	}
-	out.PrintPrettyJSON(jsonBytes)
+	output.PrintPrettyJSON(jsonBytes)
 	return nil
 }
 
@@ -63,7 +63,7 @@ func (s *StageReindex) Process(ctx *cli.Context, es client.ElasticClient) error 
 	if err != nil {
 		return err
 	}
-	out.PrintPrettyJSON(jsonBytes)
+	output.PrintPrettyJSON(jsonBytes)
 	return nil
 }
 

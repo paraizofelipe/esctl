@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/paraizofelipe/esctl/internal/client"
-	"github.com/paraizofelipe/esctl/internal/out"
+	"github.com/paraizofelipe/esctl/internal/output"
 	"github.com/urfave/cli/v2"
 )
 
@@ -27,7 +27,7 @@ func DescribeCountCommand() *cli.Command {
 				Query: ctx.String("query"),
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}

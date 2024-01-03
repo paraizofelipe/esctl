@@ -7,7 +7,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/paraizofelipe/esctl/internal/client"
-	"github.com/paraizofelipe/esctl/internal/out"
+	"github.com/paraizofelipe/esctl/internal/output"
 	"github.com/urfave/cli/v2"
 )
 
@@ -31,7 +31,7 @@ func ClusterRerouteCommand() *cli.Command {
 				Body:   body,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -45,7 +45,7 @@ func ApplyClusterReroute(ctx *cli.Context, commands types.Command) error {
 		Body:   body,
 	}
 	jsonBytes, err := es.ExecRequest(ctx.Context, request)
-	out.PrintPrettyJSON(jsonBytes)
+	output.PrintPrettyJSON(jsonBytes)
 	return err
 }
 

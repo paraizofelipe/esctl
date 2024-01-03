@@ -7,7 +7,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/paraizofelipe/esctl/internal/client"
-	"github.com/paraizofelipe/esctl/internal/out"
+	"github.com/paraizofelipe/esctl/internal/output"
 	"github.com/urfave/cli/v2"
 )
 
@@ -45,7 +45,7 @@ func DescribeIndexDocCommand() *cli.Command {
 				SourceIncludes: ctx.StringSlice("fields"),
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, docRequest)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -62,7 +62,7 @@ func DescribeIndexAliasCommand() *cli.Command {
 				Index: indexPatterns,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -75,7 +75,7 @@ func ApplyIndexAlias(ctx *cli.Context, bodies AliasBody) error {
 		Body: body,
 	}
 	jsonBytes, err := es.ExecRequest(ctx.Context, request)
-	out.PrintPrettyJSON(jsonBytes)
+	output.PrintPrettyJSON(jsonBytes)
 	return err
 }
 
@@ -100,7 +100,7 @@ func ChangeIndexAliasCommand() *cli.Command {
 				Body:  body,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -126,7 +126,7 @@ func DeleteIndexAliasCommand() *cli.Command {
 				Name:  names,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -143,7 +143,7 @@ func DescribeIndexSettingsCommand() *cli.Command {
 				Index: indexPatterns,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -160,7 +160,7 @@ func DescribeIndexMappingCommand() *cli.Command {
 				Index: indexPatterns,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -174,7 +174,7 @@ func ApplyIndexMapping(ctx *cli.Context, indexName []string, bodies types.Proper
 		Body:  body,
 	}
 	jsonBytes, err := es.ExecRequest(ctx.Context, request)
-	out.PrintPrettyJSON(jsonBytes)
+	output.PrintPrettyJSON(jsonBytes)
 	return err
 }
 
@@ -198,7 +198,7 @@ func ChangeIndexMappingCommand() *cli.Command {
 				Body:  body,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -215,7 +215,7 @@ func DescribeIndexStatsCommand() *cli.Command {
 				Index: indexPatterns,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -231,7 +231,7 @@ func DescribeIndexCommand() *cli.Command {
 				Index: []string{ctx.Args().Get(0)},
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, indexRequest)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 		Subcommands: []*cli.Command{
@@ -267,7 +267,7 @@ func CreateIndexDocCommand() *cli.Command {
 				Body:       body,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 	}
@@ -291,7 +291,7 @@ func CreateIndexCommand() *cli.Command {
 				Body:  body,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 		Subcommands: []*cli.Command{
@@ -311,7 +311,7 @@ func DeleteIndexCommand() *cli.Command {
 				Index: indexPatterns,
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
-			out.PrintPrettyJSON(jsonBytes)
+			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},
 		Subcommands: []*cli.Command{
