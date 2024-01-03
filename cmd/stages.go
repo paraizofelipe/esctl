@@ -1,14 +1,10 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
-	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/paraizofelipe/esctl/internal/client"
 	"github.com/paraizofelipe/esctl/internal/operation"
-	"github.com/paraizofelipe/esctl/internal/out"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v3"
 )
@@ -39,36 +35,9 @@ func StagesCommand() *cli.Command {
 			}
 
 			for _, stage := range stageFile.Stages {
-				switch stage.Kind {
-				case "alias":
-					var body operation.BodyAlias
-					err = stage.Body.Decode(&body)
-					if err != nil {
-						return err
-					}
-					request := &esapi.IndicesUpdateAliasesRequest{
-						Body: esutil.NewJSONReader(body),
-					}
-					jsonBytes, err := es.ExecRequest(ctx.Context, request)
-					if err != nil {
-						return err
-					}
-					out.PrintPrettyJSON(jsonBytes)
-				case "reindex":
-					var body operation.BodyReindex
-					err = stage.Body.Decode(&body)
-					if err != nil {
-						return err
-					}
-					request := &esapi.ReindexRequest{
-						Pretty: true,
-						Body:   esutil.NewJSONReader(body),
-					}
-					jsonBytes, err := es.ExecRequest(ctx.Context, request)
-					if err != nil {
-						return err
-					}
-					fmt.Println(string(jsonBytes))
+				err = stage.Process(ctx, es)
+				if err != nil {
+					return err
 				}
 			}
 
