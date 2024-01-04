@@ -160,5 +160,4 @@ tags
 
 # End of https://www.toptal.com/developers/gitignore/api/goland,go,vim
 
-./elastic
-./elastic_tools
+./_dist
