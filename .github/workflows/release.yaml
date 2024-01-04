@@ -1,0 +1,34 @@
+name: Release Workflow
+on:
+  create:
+    tags:
+      - v*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Build ESctl binaries
+        run: |
+          make build-cross
+          make dist
+      - name: Get Latest Tag
+        id: get_latest_tag
+        run: |
+          echo "LatestTag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            _dist/esctl-${{ env.LatestTag }}-amd64-darwin.tar.gz
+            _dist/esctl-${{ env.LatestTag }}-arm64-darwin.tar.gz
+            _dist/esctl-${{ env.LatestTag }}-amd64-linux.tar.gz
+            _dist/esctl-${{ env.LatestTag }}-arm64-linux.tar.gz
+            _dist/esctl-${{ env.LatestTag }}-amd64-windows.tar.gz
+          tag_name: ${{ env.LatestTag }}
+          release_name: ${{ env.LatestTag }}
+          title: ESctl v${{ env.LatestTag }}
+          body_path: release-notes.md
