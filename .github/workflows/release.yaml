@@ -28,6 +28,3 @@ jobs:
           _dist/esctl-windows-amd64.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Get the release URL
-      run: echo "Release URL: ${{ steps.create_release.outputs.upload_url }}"
