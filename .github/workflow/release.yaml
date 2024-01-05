@@ -1,0 +1,33 @@
+name: Release Workflow
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build ESctl binaries
+      run: |
+        make build-cross
+        make dist
+
+    - name: Upload binaries
+      id: create_release
+      uses: actions/create-release@v1
+      with:
+        files: |
+          _dist/esctl-linux-amd64.tar.gz
+          _dist/esctl-darwin-amd64.tar.gz
+          _dist/esctl-windows-amd64.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Get the release URL
+      run: echo "Release URL: ${{ steps.create_release.outputs.upload_url }}"
