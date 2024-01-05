@@ -4,9 +4,6 @@ on:
   create:
     tags:
       - v*
-  push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -25,6 +22,7 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       with:
+        tag_name: ${{ github.ref }}
         files: |
           _dist/esctl-linux-amd64.tar.gz
           _dist/esctl-darwin-amd64.tar.gz
