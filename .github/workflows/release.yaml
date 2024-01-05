@@ -1,9 +1,12 @@
 name: Release Workflow
 
 on:
-  release:
-    types:
-      - created
+  create:
+    tags:
+      - v*
+  push:
+    branches:
+      - main
 
 jobs:
   build:
