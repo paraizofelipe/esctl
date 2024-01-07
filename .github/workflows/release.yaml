@@ -1,31 +1,37 @@
 name: Release Workflow
-
 on:
   create:
     tags:
       - v*
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Build ESctl binaries
-      run: |
-        make build-cross
-        make dist
-
-    - name: Upload binaries
-      id: create_release
-      uses: actions/create-release@v1
-      with:
-        tag_name: ${{ github.ref }}
-        files: |
-          _dist/esctl-linux-amd64.tar.gz
-          _dist/esctl-darwin-amd64.tar.gz
-          _dist/esctl-windows-amd64.tar.gz
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Build ESctl binaries
+        run: |
+          make build-cross
+          make dist
+      - name: Get tag name
+        id: tag_name
+        run: echo "::set-output name=tag_name::$(echo $GITHUB_REF | cut -d '/' -f 3)"
+      - name: Get release name
+        id: release_name
+        run: echo "::set-output name=release_name::Release ${{ steps.tag_name.outputs.tag_name }}"
+      - name: Get title
+        id: title
+        run: echo "::set-output name=title::Release ${{ steps.tag_name.outputs.tag_name }}"
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            _dist/esctl-linux-amd64.tar.gz
+            _dist/esctl-darwin-amd64.tar.gz
+            _dist/esctl-windows-amd64.tar.gz
+          tag_name: ${{ steps.tag_name.outputs.tag_name }}
+          release_name: ${{ steps.release_name.outputs.release_name }}
+          title: ${{ steps.title.outputs.title }}
+          body_path: release-notes.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
