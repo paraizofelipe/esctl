@@ -13,25 +13,21 @@ jobs:
         run: |
           make build-cross
           make dist
-      - name: Get tag name
-        id: tag_name
-        run: echo "::set-output name=tag_name::$(echo $GITHUB_REF | cut -d '/' -f 3)"
-      - name: Get release name
-        id: release_name
-        run: echo "::set-output name=release_name::Release ${{ steps.tag_name.outputs.tag_name }}"
-      - name: Get title
-        id: title
-        run: echo "::set-output name=title::Release ${{ steps.tag_name.outputs.tag_name }}"
+      - name: Get Version
+        id: get_version
+        run: echo "::set-output name=version::$(echo $GITHUB_REF | sed -n 's/refs\/tags\/v\([0-9.]*\)/\1/p')"
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            _dist/esctl-linux-amd64.tar.gz
-            _dist/esctl-darwin-amd64.tar.gz
-            _dist/esctl-windows-amd64.tar.gz
-          tag_name: ${{ steps.tag_name.outputs.tag_name }}
-          release_name: ${{ steps.release_name.outputs.release_name }}
-          title: ${{ steps.title.outputs.title }}
+            _dist/esctl-v${{ steps.title.outputs.title }}-amd64-darwin.tar.gz
+            _dist/esctl-v${{ steps.title.outputs.title }}-arm64-darwin.tar.gz
+            _dist/esctl-v${{ steps.title.outputs.title }}-amd64-linux.tar.gz
+            _dist/esctl-v${{ steps.title.outputs.title }}-arm64-linux.tar.gz
+            _dist/esctl-v${{ steps.title.outputs.title }}-amd64-windows.tar.gz
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: v${{ steps.get_version.outputs.version }}
+          title: ESctl v${{ steps.get_version.outputs.version }}
           body_path: release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

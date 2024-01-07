@@ -56,7 +56,7 @@ dist:
 	( \
 		cd _dist && \
 		$(DIST_DIRS) cp ../README.md {} \; && \
-		$(DIST_DIRS) tar -zcf $(BINNAME)-${VERSION}-{}.tar.gz {} \; \
+		$(DIST_DIRS) tar -zcf $(BINNAME)-${BINARY_VERSION}-{}.tar.gz {} \; \
 	)
 
 .PHONY: clean
