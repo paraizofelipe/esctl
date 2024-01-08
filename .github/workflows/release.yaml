@@ -15,8 +15,11 @@ jobs:
           make dist
       - name: Get Version
         id: get_version
-        run: echo "::set-output name=version::$(echo $GITHUB_REF | sed -n 's/refs\/tags\/v\([0-9.]*\)/\1/p')"
+        run: echo "VERSION=$(echo $GITHUB_REF | sed -n 's/refs\/tags\/v\([0-9.]*\)/\1/p')" >> $GITHUB_ENV
       - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -25,9 +28,7 @@ jobs:
             _dist/esctl-v${{ steps.title.outputs.title }}-amd64-linux.tar.gz
             _dist/esctl-v${{ steps.title.outputs.title }}-arm64-linux.tar.gz
             _dist/esctl-v${{ steps.title.outputs.title }}-amd64-windows.tar.gz
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: v${{ steps.get_version.outputs.version }}
-          title: ESctl v${{ steps.get_version.outputs.version }}
+          tag_name: $VERSION
+          release_name: v$VERSION
+          title: ESctl v$VERSION
           body_path: release-notes.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
