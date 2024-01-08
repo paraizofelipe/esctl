@@ -23,12 +23,12 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            _dist/esctl-v${{ steps.title.outputs.title }}-amd64-darwin.tar.gz
-            _dist/esctl-v${{ steps.title.outputs.title }}-arm64-darwin.tar.gz
-            _dist/esctl-v${{ steps.title.outputs.title }}-amd64-linux.tar.gz
-            _dist/esctl-v${{ steps.title.outputs.title }}-arm64-linux.tar.gz
-            _dist/esctl-v${{ steps.title.outputs.title }}-amd64-windows.tar.gz
-          tag_name: $VERSION
-          release_name: v$VERSION
-          title: ESctl v$VERSION
+            _dist/esctl-v${{ $VERSION }}-amd64-darwin.tar.gz
+            _dist/esctl-v${{ $VERSION }}-arm64-darwin.tar.gz
+            _dist/esctl-v${{ $VERSION }}-amd64-linux.tar.gz
+            _dist/esctl-v${{ $VERSION }}-arm64-linux.tar.gz
+            _dist/esctl-v${{ $VERSION }}-amd64-windows.tar.gz
+          tag_name: ${{ $VERSION }}
+          release_name: v${{$VERSION}}
+          title: ESctl v{{ $VERSION }}
           body_path: release-notes.md
