@@ -4,15 +4,15 @@ import (
 	"os"
 
 	"github.com/paraizofelipe/esctl/internal/client"
-	"github.com/paraizofelipe/esctl/internal/operation"
+	"github.com/paraizofelipe/esctl/internal/step"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v3"
 )
 
-func StagesCommand() *cli.Command {
+func StepsCommand() *cli.Command {
 	return &cli.Command{
-		Name:  "run-stages",
-		Usage: "Execute a series of stages defined in a YAML file",
+		Name:  "run-steps",
+		Usage: "Execute a series of steps defined in a YAML file",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "file",
@@ -21,7 +21,7 @@ func StagesCommand() *cli.Command {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			var stageFile operation.StageFile
+			var stepFile step.StepFile
 			es := ctx.Context.Value("esClient").(client.ElasticClient)
 
 			yamlFile, err := os.ReadFile(ctx.String("file"))
@@ -29,13 +29,13 @@ func StagesCommand() *cli.Command {
 				return err
 			}
 
-			err = yaml.Unmarshal(yamlFile, &stageFile)
+			err = yaml.Unmarshal(yamlFile, &stepFile)
 			if err != nil {
 				return err
 			}
 
-			for _, stage := range stageFile.Stages {
-				err = stage.Process(ctx, es)
+			for _, step := range stepFile.Steps {
+				err = step.Process(ctx, es)
 				if err != nil {
 					return err
 				}

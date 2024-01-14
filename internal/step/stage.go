@@ -1,4 +1,4 @@
-package operation
+package step
 
 import (
 	"fmt"
@@ -23,27 +23,27 @@ type BodyAlias struct {
 
 type BodyReindex reindex.Request
 
-type StageAlias struct {
+type StepAlias struct {
 	Kind    string    `json:"kind"`
 	Body    BodyAlias `json:"body"`
 	Options Options   `json:"options"`
 }
 
-type StageReindex struct {
+type StepReindex struct {
 	Kind    string      `json:"kind"`
 	Body    BodyReindex `json:"body"`
 	Options Options     `json:"options"`
 }
 
-type StageProcessor interface {
+type StepProcessor interface {
 	Process(*cli.Context, client.ElasticClient) error
 }
 
-type StageFile struct {
-	Stages []StageProcessor `json:"stages"`
+type StepFile struct {
+	Steps []StepProcessor `json:"steps"`
 }
 
-func (s *StageAlias) Process(ctx *cli.Context, es client.ElasticClient) error {
+func (s *StepAlias) Process(ctx *cli.Context, es client.ElasticClient) error {
 	request := &esapi.IndicesUpdateAliasesRequest{
 		Body: esutil.NewJSONReader(s.Body),
 	}
@@ -55,7 +55,7 @@ func (s *StageAlias) Process(ctx *cli.Context, es client.ElasticClient) error {
 	return nil
 }
 
-func (s *StageReindex) Process(ctx *cli.Context, es client.ElasticClient) error {
+func (s *StepReindex) Process(ctx *cli.Context, es client.ElasticClient) error {
 	request := &esapi.ReindexRequest{
 		Body: esutil.NewJSONReader(s.Body),
 	}
@@ -67,38 +67,38 @@ func (s *StageReindex) Process(ctx *cli.Context, es client.ElasticClient) error 
 	return nil
 }
 
-func (s *StageFile) UnmarshalYAML(node *yaml.Node) error {
+func (s *StepFile) UnmarshalYAML(node *yaml.Node) error {
 	var rawFile struct {
-		Stages []yaml.Node `json:"stages"`
+		Steps []yaml.Node `json:"steps"`
 	}
 
 	if err := node.Decode(&rawFile); err != nil {
 		return err
 	}
 
-	for _, rawStage := range rawFile.Stages {
+	for _, rawStep := range rawFile.Steps {
 		var kind struct {
 			Kind string `yaml:"kind"`
 		}
-		if err := rawStage.Decode(&kind); err != nil {
+		if err := rawStep.Decode(&kind); err != nil {
 			return err
 		}
 
-		var stage StageProcessor
+		var step StepProcessor
 		switch kind.Kind {
 		case "alias":
-			stage = &StageAlias{}
+			step = &StepAlias{}
 		case "reindex":
-			stage = &StageReindex{}
+			step = &StepReindex{}
 		default:
-			return fmt.Errorf("unknown stage kind: %s", kind.Kind)
+			return fmt.Errorf("unknown step kind: %s", kind.Kind)
 		}
 
-		if err := rawStage.Decode(stage); err != nil {
+		if err := rawStep.Decode(step); err != nil {
 			return err
 		}
 
-		s.Stages = append(s.Stages, stage)
+		s.Steps = append(s.Steps, step)
 	}
 	return nil
 }

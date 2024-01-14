@@ -99,7 +99,7 @@ func NewRootCommand() *cli.App {
 		DeleteCommand(),
 		TaskCommand(),
 		ReindexCommand(),
-		StagesCommand(),
+		StepsCommand(),
 	}
 
 	return app
