@@ -7,12 +7,13 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/paraizofelipe/esctl/internal/client"
+	"github.com/paraizofelipe/esctl/internal/file"
 	"github.com/paraizofelipe/esctl/internal/output"
 	"github.com/urfave/cli/v2"
 )
 
 type AliasBody struct {
-	Bodies []types.IndicesAction `json:"bodies"`
+	Actions []types.IndicesAction `json:"actions"`
 }
 
 type Mapping struct {
@@ -68,13 +69,16 @@ func DescribeIndexAliasCommand() *cli.Command {
 	}
 }
 
-func ApplyIndexAlias(ctx *cli.Context, bodies AliasBody) error {
+func ApplyIndexAlias(ctx *cli.Context, aliases AliasBody) error {
 	es := ctx.Context.Value("esClient").(client.ElasticClient)
-	body := esutil.NewJSONReader(bodies)
+	body := esutil.NewJSONReader(aliases)
 	request := &esapi.IndicesUpdateAliasesRequest{
 		Body: body,
 	}
 	jsonBytes, err := es.ExecRequest(ctx.Context, request)
+	if err != nil {
+		return err
+	}
 	output.PrintPrettyJSON(jsonBytes)
 	return err
 }
@@ -282,10 +286,27 @@ func CreateIndexCommand() *cli.Command {
 				Name:    "body",
 				Aliases: []string{"b"},
 			},
+			&cli.StringFlag{
+				Name:     "file",
+				Aliases:  []string{"f"},
+				Usage:    "Specify a file path containing the settings of index",
+				Required: false,
+			},
 		},
 		Action: func(ctx *cli.Context) error {
 			es := ctx.Context.Value("esClient").(client.ElasticClient)
-			body := strings.NewReader(ctx.String("body"))
+			settings := ctx.String("body")
+			if settings == "" {
+				fileSettings, err := file.ReadJSONFile(ctx.String("file"))
+				if err != nil {
+					return err
+				}
+				if fileSettings != "" {
+					settings = fileSettings
+				}
+			}
+			body := strings.NewReader(settings)
+
 			request := &esapi.IndicesCreateRequest{
 				Index: ctx.Args().Get(0),
 				Body:  body,

@@ -9,7 +9,7 @@ import (
 
 func DescribeTaskCommand() *cli.Command {
 	return &cli.Command{
-		Name:  "task",
+		Name:  "show",
 		Usage: "Retrieve detailed information about a specific task using its ID",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -25,6 +25,9 @@ func DescribeTaskCommand() *cli.Command {
 				TaskID: ctx.String("id"),
 			}
 			jsonBytes, err := es.ExecRequest(ctx.Context, request)
+			if err != nil {
+				return err
+			}
 			output.PrintPrettyJSON(jsonBytes)
 			return err
 		},

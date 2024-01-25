@@ -33,7 +33,12 @@ func GetCommand() *cli.Command {
 				Action: func(ctx *cli.Context) error {
 					es := ctx.Context.Value("esClient").(client.ElasticClient)
 					columns := ctx.StringSlice("columns")
+					indices := ctx.Args().Slice()
+					if len(indices) == 0 {
+						indices = []string{"*"}
+					}
 					request := &esapi.CatIndicesRequest{
+						Index:  indices,
 						V:      esapi.BoolPtr(true),
 						Pretty: true,
 						H:      columns,
