@@ -13,15 +13,15 @@ This project aims to provide an alternative for managing Elasticsearch clusters,
 - Elasticsearch cluster up and running
 - Basic understanding of Elasticsearch concepts and CLI operations
 
-### Installation
+## Installation
 
-#### Go get
+### Go get
 
 1. Install `esctl` using Go: `go get github.com/paraizofelipe/esctl`
 2. This command will automatically download and install `esctl` in your Go bin directory.
 3. Ensure your Go bin directory is in your system's PATH to run `esctl` from any location.
 
-#### Tarball
+### Tarball
 
 1. Download the Tarball: Visit the Releases section of the esctl GitHub repository and download the latest tarball for your operating system.
 
@@ -78,9 +78,6 @@ The script `get_esctl.sh` should be designed to:
 - Move the esctl binary to ~/.config/esctl/bin.
 - Create a symbolic link in ~/.local/bin.
 - Clean up any temporary files created during the process.
-
-Please ensure you have the required permissions to execute scripts from the internet and that you trust the source of the script.
-
 
 
 ## Commands
